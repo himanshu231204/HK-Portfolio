@@ -2,39 +2,20 @@
 
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Star, GitFork, ExternalLink, Sparkles, Terminal, Workflow, X } from 'lucide-react';
+import { Star, GitFork, ExternalLink, Sparkles, Terminal, Workflow, X, Toolbox } from 'lucide-react';
 import { Github } from '@/components/SocialIcons';
 import { fetchGitHubRepos, formatDate, type GitHubRepo } from '@/utils/api';
+import { type FeaturedProject } from '@/utils/types';
+import featuredProjectsData from '@/public/data/featuredProjects.json';
 
-const featuredProjects = [
-  {
-    title: "AI Commit",
-    description: "Generates intelligent Git commit messages using local LLMs (offline, privacy-first CLI Tool)",
-    icon: Terminal,
-    gradient: "from-green-500 to-emerald-600",
-    github: "https://github.com/himanshu231204/ai-commit",
-    tags: ["CLI", "LLM", "Privacy"],
-    featured: true,
-  },
-  {
-    title: "RAG-based AI Application",
-    description: "Document Q&A system with explainable retrieval",
-    icon: Sparkles,
-    gradient: "from-purple-500 to-pink-600",
-    github: "#",
-    tags: ["RAG", "NLP", "LLM"],
-    featured: true,
-  },
-  {
-    title: "AutoML Studio",
-    description: "End-to-end ML platform that automates EDA, preprocessing, training, and evaluation",
-    icon: Workflow,
-    gradient: "from-blue-500 to-cyan-600",
-    github: "#",
-    tags: ["AutoML", "ML", "Platform"],
-    featured: true,
-  },
-];
+const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
+  Terminal,
+  Sparkles,
+  Workflow,
+  Toolbox,
+};
+
+const featuredProjects: FeaturedProject[] = featuredProjectsData.projects;
 
 // Extract all unique tech tags from projects
 const allTechTags = Array.from(
@@ -58,7 +39,7 @@ export default function Projects() {
     try {
       const data = await fetchGitHubRepos('himanshu231204');
       setRepos(data);
-    } catch (err) {
+    } catch {
       setError('Failed to load repositories');
     } finally {
       setLoading(false);
@@ -186,7 +167,14 @@ export default function Projects() {
               onClick={() => window.open(project.github, '_blank')}
             >
               <div className={`h-32 bg-gradient-to-br ${project.gradient} flex items-center justify-center relative overflow-hidden`}>
-                <project.icon size={48} className="text-white/80 group-hover:scale-110 transition-transform duration-300" />
+                {(() => {
+                  const IconComponent = iconMap[project.icon];
+                  return IconComponent ? (
+                    <IconComponent size={48} className="text-white/80 group-hover:scale-110 transition-transform duration-300" />
+                  ) : (
+                    <Sparkles size={48} className="text-white/80 group-hover:scale-110 transition-transform duration-300" />
+                  );
+                })()}
                 <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>

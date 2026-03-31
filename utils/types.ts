@@ -13,3 +13,17 @@ export interface LinkedInData {
   profileUrl: string;
   posts: LinkedInPost[];
 }
+
+export interface FeaturedProject {
+  title: string;
+  description: string;
+  icon: string;
+  gradient: string;
+  github: string;
+  tags: string[];
+  featured: boolean;
+}
+
+export interface FeaturedProjectsData {
+  projects: FeaturedProject[];
+}

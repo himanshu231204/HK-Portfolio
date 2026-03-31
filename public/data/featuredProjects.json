@@ -1,0 +1,40 @@
+{
+  "projects": [
+    {
+      "title": "AI Commit",
+      "description": "Generates intelligent Git commit messages using local LLMs (offline, privacy-first CLI Tool)",
+      "icon": "Terminal",
+      "gradient": "from-green-500 to-emerald-600",
+      "github": "https://github.com/himanshu231204/ai-commit",
+      "tags": ["CLI", "LLM", "Privacy"],
+      "featured": true
+    },
+    {
+      "title": "RAG-based AI Application",
+      "description": "Document Q&A system with explainable retrieval",
+      "icon": "Sparkles",
+      "gradient": "from-purple-500 to-pink-600",
+      "github": "https://github.com/himanshu231204/ragnova-rag-chatbot",
+      "tags": ["RAG", "NLP", "LLM"],
+      "featured": true
+    },
+    {
+      "title": "AutoML Studio",
+      "description": "End-to-end ML platform that automates EDA, preprocessing, training, and evaluation",
+      "icon": "Workflow",
+      "gradient": "from-blue-500 to-cyan-600",
+      "github": "https://github.com/himanshu231204/AutoML-Studio-Pro-",
+      "tags": ["AutoML", "ML", "Platform"],
+      "featured": true
+    },
+    {
+      "title": "run-git",
+      "description": "AI-powered Git CLI tool that automates commits, generates messages, and provides intelligent code review directly from your terminal",
+      "icon": "Toolbox",
+      "gradient": "from-purple-500 to-indigo-600",
+      "github": "https://github.com/himanshu231204/run-git",
+      "tags": ["Git", "CLI", "AI", "Developer Tools"],
+      "featured": true
+    }
+  ]
+}
