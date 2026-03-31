@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Menu, X, Mail } from 'lucide-react';
 import { Github, Linkedin, Twitter } from '@/components/SocialIcons';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const navLinks = [
   { name: 'About', href: '#about' },
   { name: 'Skills', href: '#skills' },
   { name: 'Projects', href: '#projects' },
+  { name: 'Articles', href: '#articles' },
   { name: 'GitHub', href: '#github' },
   { name: 'Contact', href: '#contact' },
 ];
@@ -56,6 +58,7 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
+          <ThemeToggle />
           <motion.a
             href="https://github.com/himanshu231204"
             target="_blank"
@@ -117,7 +120,8 @@ export default function Navbar() {
                 {link.name}
               </a>
             ))}
-            <div className="flex gap-4 mt-4 pt-4 border-t border-slate-800">
+            <div className="flex items-center gap-4 mt-4 pt-4 border-t border-slate-800">
+              <ThemeToggle />
               <a
                 href="https://github.com/himanshu231204"
                 target="_blank"

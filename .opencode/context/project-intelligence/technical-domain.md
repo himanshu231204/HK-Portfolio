@@ -1,108 +1,147 @@
-<!-- Context: project-intelligence/technical | Priority: high | Version: 1.0 | Updated: 2025-01-12 -->
+<!-- Context: project-intelligence/technical | Priority: critical | Version: 1.2 | Updated: 2026-04-01 -->
 
 # Technical Domain
 
-> Document the technical foundation, architecture, and key decisions.
+> Portfolio website tech stack, architecture, and patterns.
 
 ## Quick Reference
 
-- **Purpose**: Understand how the project works technically
+- **Purpose**: Understand how the portfolio works technically
 - **Update When**: New features, refactoring, tech stack changes
-- **Audience**: Developers, DevOps, technical stakeholders
+- **Audience**: Developers, AI agents
 
 ## Primary Stack
 
 | Layer | Technology | Version | Rationale |
 |-------|-----------|---------|-----------|
-| Language | [e.g., TypeScript] | [Version] | [Why this language] |
-| Framework | [e.g., Node.js] | [Version] | [Why this framework] |
-| Database | [e.g., PostgreSQL] | [Version] | [Why this database] |
-| Infrastructure | [e.g., AWS, Vercel] | [N/A] | [Why this infra] |
-| Key Libraries | [List important ones] | [Versions] | [Why each matters] |
+| Framework | Next.js | 16.x | App Router, SSR, static export |
+| Language | TypeScript | 5.x | Type safety, better DX |
+| Styling | Tailwind CSS | v4 | Utility-first, no runtime |
+| Animations | Framer Motion | 11.x | Declarative animations, 'use client' |
+| Icons | lucide-react + custom SVG | 1.7.0 | Lightweight, GitHub/LinkedIn custom |
+| Email | EmailJS | 4.x | Client-side email without backend |
 
 ## Architecture Pattern
 
 ```
-Type: [Monolith | Microservices | Serverless | Agent-based | Hybrid]
-Pattern: [Brief description]
-Diagram: [Link to architecture diagram if exists]
+Type: Static/Serverless
+Pattern: Next.js App Router with static generation for performance
 ```
 
 ### Why This Architecture?
 
-[Explain the business and technical reasons for this architecture choice. What problem does this architecture solve? What were alternatives considered?]
+Portfolio is a static showcase site - no database, no auth, no dynamic backend. Next.js App Router provides SSR for SEO and client-side hydration for animations. Static export possible for CDNs.
 
 ## Project Structure
 
 ```
-[Project Root]
-├── src/                    # Source code
-├── tests/                  # Test files
-├── docs/                   # Documentation
-├── scripts/                # Build/deploy scripts
-└── [Other key directories]
+portfolio-new/
+├── app/                      # Next.js app router
+│   ├── articles/[slug]/      # Dynamic article pages
+│   ├── layout.tsx            # Root layout with ThemeProvider
+│   └── page.tsx              # Main page
+├── components/               # Reusable components
+│   ├── ThemeProvider.tsx     # Dark/light theme context
+│   ├── ThemeToggle.tsx       # Theme toggle button
+│   ├── sections/             # Page sections
+│   └── *.tsx                 # Various components
+├── hooks/                    # Custom hooks
+├── utils/                    # Utilities (api.ts, types.ts)
+└── public/
+    ├── data/                 # JSON data
+    └── articles/             # Markdown articles
 ```
-
-**Key Directories**:
-- `src/` - Contains all application logic organized by [module/feature/domain]
-- `tests/` - [How tests are organized]
-- `docs/` - [What documentation lives here]
 
 ## Key Technical Decisions
 
 | Decision | Rationale | Impact |
 |----------|-----------|--------|
-| [Decision 1] | [Why this choice] | [What it enables] |
-| [Decision 2] | [Why this choice] | [What it enables] |
+| Tailwind CSS v4 | CSS-based config, no tailwind.config.js | Simpler setup |
+| Framer Motion | Declarative animations, 'use client' required | Smooth scroll animations |
+| JSON for posts | No backend, static data | Easy updates via file edit |
+| Custom SVG icons | lucide-react missing GitHub/LinkedIn | Consistent icon style |
+| ThemeProvider | Dark/light mode with localStorage | User preference persists |
+| EmailJS | Client-side email without backend | No server needed |
 
-See `decisions-log.md` for full decision history with alternatives.
+## New Features (v1.2)
+
+### 1. Project Filtering by Technology
+- Clickable tech tags + dropdown filter
+- OR logic: shows repos with ANY selected tech
+- Filters both language and topics from GitHub API
+- Implementation: `components/sections/Projects.tsx`
+
+### 2. Article Functionality
+- Markdown files in `public/articles/`
+- Article list section on homepage
+- Individual article pages at `/articles/[slug]`
+- Frontmatter: title, excerpt, date, tags
+- Implementation: `components/sections/Articles.tsx`, `app/articles/`
+
+### 3. Dark/Light Theme Toggle
+- Toggle button in navbar
+- System preference auto-detect on first visit
+- Persists choice in localStorage
+- CSS variables for light theme in globals.css
+- Implementation: `components/ThemeProvider.tsx`, `components/ThemeToggle.tsx`
+
+### 4. Contact Form with EmailJS
+- Name, Email, Subject, Message fields
+- Client-side validation
+- Loading/success/error states
+- Requires EmailJS credentials in Contact.tsx
+- Implementation: `components/sections/Contact.tsx`
 
 ## Integration Points
 
 | System | Purpose | Protocol | Direction |
 |--------|---------|----------|-----------|
-| [API 1] | [What it does] | [REST/GraphQL/gRPC] | [Inbound/Outbound] |
-| [Database] | [What it stores] | [PostgreSQL/Mongo/etc] | [Internal] |
-| [Service] | [What it provides] | [HTTP/gRPC] | [Outbound] |
-
-## Technical Constraints
-
-| Constraint | Origin | Impact |
-|------------|--------|--------|
-| [Legacy systems] | [Business/Tech] | [What limitation it creates] |
-| [Compliance] | [Regulation] | [What must be followed] |
-| [Performance] | [SLAs] | [What must be met] |
+| GitHub API | Fetch public repos, stats | REST | Outbound |
+| featuredPosts.json | LinkedIn posts backup | JSON/Static | Internal |
+| Articles index | Article metadata | JSON/Static | Internal |
+| EmailJS | Contact form email | JS SDK | Outbound |
 
 ## Development Environment
 
 ```
-Setup: [Quick setup command or link]
-Requirements: [What developers need installed]
-Local Dev: [How to run locally]
-Testing: [How to run tests]
+Setup: npm install
+Requirements: Node.js 18+
+Local Dev: npm run dev (http://localhost:3000)
+Build: npm run build
+Lint: npm run lint
+Type Check: npx tsc --noEmit
+Testing: None (per project guidelines)
 ```
 
 ## Deployment
 
 ```
-Environment: [Production/Staging/Development]
-Platform: [Where it deploys]
-CI/CD: [Pipeline used]
-Monitoring: [Tools for observability]
+Environment: Production (Vercel recommended)
+Platform: Vercel (zero-config for Next.js)
+CI/CD: GitHub Actions (if configured)
 ```
 
 ## Onboarding Checklist
 
-- [ ] Know the primary tech stack
-- [ ] Understand the architecture pattern and why it was chosen
-- [ ] Know the key project directories and their purpose
-- [ ] Understand major technical decisions and rationale
-- [ ] Know integration points and dependencies
-- [ ] Be able to set up local development environment
-- [ ] Know how to run tests and deploy
+- [x] Know the primary tech stack (Next.js 16, TypeScript, Tailwind v4, Framer Motion)
+- [x] Understand architecture pattern (static/SSR portfolio)
+- [x] Know key directories (components/sections/, utils/, public/)
+- [x] Understand GitHub API integration and JSON data sources
+- [x] Know new features: filtering, articles, theme, EmailJS
+- [x] Be able to set up local environment (npm install, npm run dev)
+- [x] Know lint/type check commands
+
+## 📂 Codebase References
+
+**Main Page**: `app/page.tsx` - Composes all sections including Articles
+**Theme**: `components/ThemeProvider.tsx` - Dark/light theme context
+**Contact**: `components/sections/Contact.tsx` - EmailJS form integration
+**Articles**: `components/sections/Articles.tsx` - Article list
+**Projects**: `components/sections/Projects.tsx` - Tech filtering
 
 ## Related Files
 
-- `business-domain.md` - Why this technical foundation exists
-- `business-tech-bridge.md` - How business needs map to technical solutions
-- `decisions-log.md` - Full decision history with context
+- `portfolio/domain/project-structure.md` - Detailed directory structure
+- `portfolio/domain/github-integration.md` - GitHub API patterns
+- `portfolio/standards/section-templates.md` - Section creation patterns
+- `portfolio/standards/animation-standards.md` - Framer Motion patterns

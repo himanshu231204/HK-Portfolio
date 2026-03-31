@@ -1,88 +1,93 @@
-<!-- Context: project-intelligence/business | Priority: high | Version: 1.0 | Updated: 2025-01-12 -->
+<!-- Context: project-intelligence/business | Priority: critical | Version: 1.1 | Updated: 2026-04-01 -->
 
 # Business Domain
 
-> Document the business context, problems solved, and value created.
+> Personal developer portfolio - showcasing skills, projects, and professional presence.
 
 ## Quick Reference
 
-- **Purpose**: Understand why this project exists
-- **Update When**: Business direction changes, new features shipped, pivot
-- **Audience**: Developers needing context, stakeholders, product team
+- **Purpose**: Showcase developer skills, projects, and connect with potential employers/clients
+- **Update When**: New projects, skills, career changes
+- **Audience**: Recruiters, hiring managers, potential clients, fellow developers
 
 ## Project Identity
 
 ```
-Project Name: [Name]
-Tagline: [One-line description]
-Problem Statement: [What problem are we solving?]
-Solution: [How we're solving it]
+Project Name: Developer Portfolio
+Tagline: Personal portfolio website showcasing development skills and projects
+Problem Statement: Need a professional online presence to attract job opportunities and clients
+Solution: Static portfolio site with GitHub integration, project showcase, and contact options
 ```
 
 ## Target Users
 
 | User Segment | Who They Are | What They Need | Pain Points |
 |--------------|--------------|----------------|-------------|
-| [Primary] | [Description] | [Their needs] | [Their frustrations] |
-| [Secondary] | [Description] | [Their needs] | [Their frustrations] |
+| Recruiters | Technical recruiters scanning candidates | Quick overview of skills, projects, GitHub activity | Hard to assess developer capabilities quickly |
+| Hiring Managers | Tech leads/engineering managers | Verify skills, see real projects, assess code quality | LinkedIn doesn't show actual work |
+| Potential Clients | Businesses needing developers | See capabilities, past work, contact info | Portfolio samples scattered |
+| Fellow Developers | Other devs browsing | Get inspired, see technologies used, connect | Hard to find contact info |
 
 ## Value Proposition
 
 **For Users**:
-- [Key benefit 1]
-- [Key benefit 2]
-- [Key benefit 3]
+- Quick skills overview in one place
+- Live GitHub repo/activity展示
+- Project showcase with descriptions
+- Easy contact options
 
-**For Business**:
-- [Key value 1]
-- [Key value 2]
+**For Developer (You)**:
+- Single source of truth for professional presence
+- Automatic GitHub sync (no manual updates)
+- Differentiate from LinkedIn profiles
+- Demonstrate web development skills
 
 ## Success Metrics
 
 | Metric | Definition | Target | Current |
 |--------|------------|--------|---------|
-| [Metric 1] | [What it measures] | [Goal] | [Actual] |
-| [Metric 2] | [What it measures] | [Goal] | [Actual] |
-
-## Business Model (if applicable)
-
-```
-Revenue Model: [How the business makes money]
-Pricing Strategy: [If applicable]
-Unit Economics: [CAC, LTV, etc.]
-Market Position: [Where we fit in the market]
-```
+| Page Views | Unique visitors | 500/month | - |
+| GitHub Clicks | Click-through to GitHub | 100/month | - |
+| Contact Inquiries | Contact form/message clicks | 10/month | - |
+| Skills Match | Skills listed vs. used in projects | 100% | - |
 
 ## Key Stakeholders
 
 | Role | Name | Responsibility | Contact |
 |------|------|----------------|---------|
-| [Product Owner] | [Name] | [What they own] | [Contact] |
-| [Tech Lead] | [Name] | [What they own] | [Contact] |
-| [Business Lead] | [Name] | [What they own] | [Contact] |
+| Owner | [Your Name] | Content, maintenance | Portfolio owner |
+| Developer | [Your Name] | Code, deployments | Same |
 
 ## Roadmap Context
 
-**Current Focus**: [What we're working on now]
-**Next Milestone**: [Upcoming goal]
-**Long-term Vision**: [Where this is heading]
+**Current Focus**: Initial launch with core sections
+**Next Milestone**: Add blog/content section, improve animations
+**Long-term Vision**: Multi-language support, dark/light theme toggle
 
 ## Business Constraints
 
-- [Constraint 1] - [Why it exists]
-- [Constraint 2] - [Why it exists]
+- No backend - static site only (simplicity, cost)
+- No database - JSON for data (easy editing)
+- No auth - public site only (no private content)
+- Free hosting - Vercel (zero cost for static)
 
 ## Onboarding Checklist
 
-- [ ] Understand the problem statement
-- [ ] Identify target users and their needs
-- [ ] Know the key value proposition
-- [ ] Understand success metrics
-- [ ] Know who the stakeholders are
-- [ ] Understand current business constraints
+- [x] Understand the problem statement (professional online presence)
+- [x] Identify target users (recruiters, clients, fellow devs)
+- [x] Know the key value proposition (skills + projects + GitHub)
+- [x] Understand success metrics (views, clicks, inquiries)
+- [x] Know who the stakeholder is (single owner/developer)
+- [x] Understand current business constraints (static, no DB, no auth)
+
+## 📂 Codebase References
+
+**Main Page**: `app/page.tsx` - Composes all sections
+**Sections**: `components/sections/*.tsx` - Hero, About, Skills, Projects, etc.
+**Data Sources**: `public/data/featuredPosts.json` - LinkedIn posts backup
 
 ## Related Files
 
-- `technical-domain.md` - How this business need is solved technically
-- `business-tech-bridge.md` - Mapping between business and technical
-- `decisions-log.md` - Business decisions with context
+- `technical-domain.md` - Tech stack used (Next.js 16, TypeScript, Tailwind v4)
+- `portfolio/domain/project-structure.md` - File organization
+- `decisions-log.md` - Why certain features/changes were made

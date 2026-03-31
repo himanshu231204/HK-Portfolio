@@ -1,10 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, MapPin, Send, Check } from 'lucide-react';
+import { Mail, MapPin, Send, Check, AlertCircle, Loader2 } from 'lucide-react';
 import { Github, Linkedin, Twitter } from '@/components/SocialIcons';
 import ContactCard from '@/components/ContactCard';
+
+// Replace with your actual EmailJS credentials
+// Get these from https://dashboard.emailjs.com/
+const EMAILJS_SERVICE_ID = 'service_ia5d169';
+const EMAILJS_TEMPLATE_ID = 'template_d0tklgf';
+const EMAILJS_PUBLIC_KEY = 'oUJj8uRxsyz1H-3sm';
 
 const contactDetails = [
   {
@@ -39,19 +45,97 @@ const contactDetails = [
   },
 ];
 
+type FormStatus = 'idle' | 'loading' | 'success' | 'error';
+
+interface FormErrors {
+  name?: string;
+  email?: string;
+  subject?: string;
+  message?: string;
+}
+
 export default function Contact() {
   const [formState, setFormState] = useState({
     name: '',
     email: '',
+    subject: '',
     message: '',
   });
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [status, setStatus] = useState<FormStatus>('idle');
+  const [errors, setErrors] = useState<FormErrors>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
+    
+    if (!formState.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+    
+    if (!formState.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email)) {
+      newErrors.email = 'Please enter a valid email';
+    }
+    
+    if (!formState.subject.trim()) {
+      newErrors.subject = 'Subject is required';
+    }
+    
+    if (!formState.message.trim()) {
+      newErrors.message = 'Message is required';
+    } else if (formState.message.trim().length < 10) {
+      newErrors.message = 'Message must be at least 10 characters';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const mailtoLink = `mailto:himanshu231204@gmail.com?subject=Portfolio Contact - ${formState.name}&body=${encodeURIComponent(formState.message)}`;
-    window.location.href = mailtoLink;
-    setIsSubmitted(true);
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    setStatus('loading');
+    
+    try {
+      // Dynamic import for EmailJS (works in client-side only)
+      const emailjs = await import('@emailjs/browser');
+      
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          from_name: formState.name,
+          from_email: formState.email,
+          subject: formState.subject,
+          message: formState.message,
+        },
+        EMAILJS_PUBLIC_KEY
+      );
+      
+      setStatus('success');
+      setFormState({ name: '', email: '', subject: '', message: '' });
+      
+      // Reset status after 5 seconds
+      setTimeout(() => setStatus('idle'), 5000);
+    } catch (error) {
+      console.error('EmailJS error:', error);
+      setStatus('error');
+      
+      // Reset error status after 5 seconds
+      setTimeout(() => setStatus('idle'), 5000);
+    }
+  };
+
+  const handleChange = (field: string, value: string) => {
+    setFormState(prev => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (errors[field as keyof FormErrors]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
   };
 
   return (
@@ -76,7 +160,7 @@ export default function Contact() {
             className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/10 rounded-full text-indigo-400 text-sm mb-4"
           >
             <Mail size={16} />
-            <span>Let's Connect</span>
+            <span>Let&apos;s Connect</span>
           </motion.div>
           
           <h2 className="text-4xl md:text-5xl font-bold mb-4">
@@ -111,7 +195,7 @@ export default function Contact() {
             </div>
           </motion.div>
 
-          {/* Contact Form */}
+          {/* Contact Form with EmailJS */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -121,70 +205,167 @@ export default function Contact() {
             <h3 className="text-2xl font-semibold mb-6">Send a Message</h3>
             
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Name Field */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: 0.1 }}
               >
-                <label className="block text-sm text-slate-400 mb-2">Name</label>
+                <label className="block text-sm text-slate-400 mb-2">Name *</label>
                 <input
                   type="text"
                   value={formState.name}
-                  onChange={(e) => setFormState({ ...formState, name: e.target.value })}
+                  onChange={(e) => handleChange('name', e.target.value)}
                   required
-                  className="w-full px-4 py-3 bg-white/5 border border-slate-800 rounded-xl focus:outline-none focus:border-indigo-500 transition-colors text-slate-300"
+                  disabled={status === 'loading'}
+                  className={`w-full px-4 py-3 bg-white/5 border rounded-xl focus:outline-none transition-colors text-slate-300 placeholder:text-slate-600 ${
+                    errors.name 
+                      ? 'border-red-500 focus:border-red-500' 
+                      : 'border-slate-800 focus:border-indigo-500'
+                  }`}
                   placeholder="Your name"
                 />
+                {errors.name && (
+                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle size={12} />
+                    {errors.name}
+                  </p>
+                )}
               </motion.div>
               
+              {/* Email Field */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: 0.2 }}
               >
-                <label className="block text-sm text-slate-400 mb-2">Email</label>
+                <label className="block text-sm text-slate-400 mb-2">Email *</label>
                 <input
                   type="email"
                   value={formState.email}
-                  onChange={(e) => setFormState({ ...formState, email: e.target.value })}
+                  onChange={(e) => handleChange('email', e.target.value)}
                   required
-                  className="w-full px-4 py-3 bg-white/5 border border-slate-800 rounded-xl focus:outline-none focus:border-indigo-500 transition-colors text-slate-300"
+                  disabled={status === 'loading'}
+                  className={`w-full px-4 py-3 bg-white/5 border rounded-xl focus:outline-none transition-colors text-slate-300 placeholder:text-slate-600 ${
+                    errors.email 
+                      ? 'border-red-500 focus:border-red-500' 
+                      : 'border-slate-800 focus:border-indigo-500'
+                  }`}
                   placeholder="your@email.com"
                 />
+                {errors.email && (
+                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle size={12} />
+                    {errors.email}
+                  </p>
+                )}
               </motion.div>
               
+              {/* Subject Field */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: 0.25 }}
+              >
+                <label className="block text-sm text-slate-400 mb-2">Subject *</label>
+                <input
+                  type="text"
+                  value={formState.subject}
+                  onChange={(e) => handleChange('subject', e.target.value)}
+                  required
+                  disabled={status === 'loading'}
+                  className={`w-full px-4 py-3 bg-white/5 border rounded-xl focus:outline-none transition-colors text-slate-300 placeholder:text-slate-600 ${
+                    errors.subject 
+                      ? 'border-red-500 focus:border-red-500' 
+                      : 'border-slate-800 focus:border-indigo-500'
+                  }`}
+                  placeholder="What's this about?"
+                />
+                {errors.subject && (
+                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle size={12} />
+                    {errors.subject}
+                  </p>
+                )}
+              </motion.div>
+              
+              {/* Message Field */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: 0.3 }}
               >
-                <label className="block text-sm text-slate-400 mb-2">Message</label>
+                <label className="block text-sm text-slate-400 mb-2">Message *</label>
                 <textarea
                   value={formState.message}
-                  onChange={(e) => setFormState({ ...formState, message: e.target.value })}
+                  onChange={(e) => handleChange('message', e.target.value)}
                   required
+                  disabled={status === 'loading'}
                   rows={5}
-                  className="w-full px-4 py-3 bg-white/5 border border-slate-800 rounded-xl focus:outline-none focus:border-indigo-500 transition-colors text-slate-300 resize-none"
+                  className={`w-full px-4 py-3 bg-white/5 border rounded-xl focus:outline-none transition-colors text-slate-300 placeholder:text-slate-600 resize-none ${
+                    errors.message 
+                      ? 'border-red-500 focus:border-red-500' 
+                      : 'border-slate-800 focus:border-indigo-500'
+                  }`}
                   placeholder="Your message..."
                 />
+                {errors.message && (
+                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle size={12} />
+                    {errors.message}
+                  </p>
+                )}
               </motion.div>
               
+              {/* Status Messages */}
+              {status === 'success' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-2 p-4 bg-green-500/10 border border-green-500/30 rounded-xl text-green-400"
+                >
+                  <Check size={20} />
+                  <span>Message sent successfully! I&apos;ll get back to you soon.</span>
+                </motion.div>
+              )}
+              
+              {status === 'error' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400"
+                >
+                  <AlertCircle size={20} />
+                  <span>Failed to send message. Please try again or email me directly.</span>
+                </motion.div>
+              )}
+              
+              {/* Submit Button */}
               <motion.button
                 type="submit"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors"
+                disabled={status === 'loading'}
+                whileHover={status === 'loading' ? {} : { scale: 1.02 }}
+                whileTap={status === 'loading' ? {} : { scale: 0.98 }}
+                className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-800 rounded-xl font-medium flex items-center justify-center gap-2 transition-colors disabled:cursor-not-allowed"
               >
-                {isSubmitted ? (
+                {status === 'loading' ? (
                   <>
-                    <Check size={20} /> Message Sent!
+                    <Loader2 size={20} className="animate-spin" />
+                    <span>Sending...</span>
+                  </>
+                ) : status === 'success' ? (
+                  <>
+                    <Check size={20} />
+                    <span>Sent!</span>
                   </>
                 ) : (
                   <>
-                    <Send size={20} /> Send Message
+                    <Send size={20} />
+                    <span>Send Message</span>
                   </>
                 )}
               </motion.button>

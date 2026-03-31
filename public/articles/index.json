@@ -1,0 +1,11 @@
+{
+  "articles": [
+    {
+      "slug": "building-ai-cli-tools",
+      "title": "Building AI-Powered CLI Tools with Local LLMs",
+      "excerpt": "How I built a privacy-first Git commit message generator using local large language models",
+      "date": "2026-03-15",
+      "tags": ["AI", "CLI", "LLM", "Privacy", "Git"]
+    }
+  ]
+}

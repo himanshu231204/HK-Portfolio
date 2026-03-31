@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Sparkles, Code, GraduationCap } from 'lucide-react';
+import Image from 'next/image';
 
 export default function About() {
   const highlights = [
@@ -39,6 +40,8 @@ export default function About() {
             Computer Science Engineering student focused on building real-world AI systems in Machine Learning and Generative AI.
           </p>
         </motion.div>
+
+        
 
         <div className="grid md:grid-cols-3 gap-6">
           {highlights.map((item, index) => (

@@ -86,7 +86,7 @@ export default function Hero() {
                 download
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 glass rounded-full hover:bg-white/10 transition-colors flex items-center gap-2"
+                className="px-6 py-3 glass rounded-full hover:bg-white/10 transition-colors flex items-center gap-2 cursor-pointer"
               >
                 <Download size={18} /> Resume
               </motion.a>
@@ -137,16 +137,48 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="relative"
           >
-            <div className="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden gradient-border glow-effect">
-              <div className="w-full h-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center">
+            {/* Blurred gradient background behind image */}
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 blur-2xl opacity-50 rounded-full" />
+            
+            {/* Profile Image */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              transition={{ duration: 0.3 }}
+              className="relative"
+            >
+              <img
+                src="/images/mypic.jpeg"
+                alt="Himanshu Kumar"
+                className="w-64 h-64 md:w-80 md:h-80 rounded-full object-cover border border-white/10 shadow-[0_0_40px_rgba(139,92,246,0.5)] transition-all duration-300"
+                onError={(e) => {
+                  // Fallback: show gradient with HK if image fails
+                  const target = e.currentTarget;
+                  target.style.display = 'none';
+                  const fallback = target.nextElementSibling as HTMLElement;
+                  if (fallback) fallback.style.display = 'flex';
+                }}
+              />
+              {/* Fallback - shown if image fails to load */}
+              <div 
+                className="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden gradient-border glow-effect bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 absolute top-0 left-0 hidden items-center justify-center"
+              >
                 <span className="text-8xl font-bold text-white/20">HK</span>
               </div>
-            </div>
+            </motion.div>
+            
+            {/* Rotating dashed border */}
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               className="absolute inset-0 rounded-full border-2 border-dashed border-indigo-500/30"
               style={{ padding: '10px' }}
+            />
+            
+            {/* Floating animation wrapper */}
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute inset-0"
             />
           </motion.div>
         </div>
