@@ -17,7 +17,8 @@
 ├── content-creation/       # Content creation (all formats)
 ├── data/                   # Data engineering & analytics
 ├── product/                # Product management
-└── learning/               # Educational content
+├── learning/               # Educational content
+└── portfolio/              # Portfolio website (Next.js 16)
 ```
 
 ---
@@ -34,6 +35,7 @@
 | **Add agent** | `openagents-repo/guides/adding-agent.md` |
 | **UI development** | `development/ui-navigation.md` |
 | **API development** | `development/backend-navigation.md` |
+| **Portfolio management** | `portfolio/navigation.md` |
 
 ---
 
@@ -47,3 +49,4 @@
 **data/** - Data engineering → `data/navigation.md`
 **product/** - Product management → `product/navigation.md`
 **learning/** - Educational → `learning/navigation.md`
+**portfolio/** - Portfolio website → `portfolio/navigation.md`
