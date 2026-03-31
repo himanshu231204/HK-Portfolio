@@ -14,36 +14,36 @@ interface Certification {
 
 const certifications: Certification[] = [
   {
-    title: "Machine Learning Specialization",
-    issuer: "Stanford Online (Coursera)",
-    date: "2025",
-    credentialId: "ML-2025-001",
-    url: "#",
-    description: "Comprehensive ML covering supervised learning, unsupervised learning, and best practices."
+    title: "Claude Code in Action",
+    issuer: "Anthropic",
+    date: "Mar 2026",
+    credentialId: "wxc3tuqafyjg",
+    url: "https://verify.skilljar.com/c/wxc3tuqafyjg",
+    description: "Completed a course on Claude Code usage and AI-powered development workflows."
   },
   {
-    title: "Deep Learning Specialization",
-    issuer: "DeepLearning.AI (Coursera)",
-    date: "2025",
-    credentialId: "DL-2025-002",
-    url: "#",
-    description: "Neural networks, deep learning, structuring ML projects, and AI applications."
+    title: "Get Started with Databricks for Generative AI",
+    issuer: "Databricks",
+    date: "Jan 2026",
+    credentialId: "9746936",
+    url: "https://simpli-web.app.link/e/eSxBk0UXX1b",
+    description: "Learned Databricks platform for Generative AI including data pipelines, Delta Lake, Spark processing, and AI workflows."
   },
   {
-    title: "AWS Certified Solutions Architect",
-    issuer: "Amazon Web Services",
-    date: "2024",
-    credentialId: "AWS-SAA-C03",
-    url: "#",
-    description: "Designing distributed systems on AWS - compute, storage, database, and networking."
+    title: "Introduction to Generative AI",
+    issuer: "Simplilearn (SkillUp) – Powered by Google Cloud",
+    date: "Jan 2026",
+    credentialId: "9731066",
+    url: "https://simpli-web.app.link/e/kBMrkZYXX1b",
+    description: "Covered fundamentals of Generative AI, LLMs, and real-world applications."
   },
   {
-    title: "Python for Data Science",
-    issuer: "IBM (Coursera)",
-    date: "2024",
-    credentialId: "PY-DS-2024",
+    title: "Programming with Python",
+    issuer: "Internshala Trainings",
+    date: "Jun 2025",
+    credentialId: "elooktz9ps2",
     url: "#",
-    description: "Python programming, data analysis, visualization, and machine learning basics."
+    description: "Completed a 6-week training covering Python programming fundamentals and practical implementation."
   },
 ];
 

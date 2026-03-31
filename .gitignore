@@ -134,6 +134,12 @@ dist
 !.yarn/sdks
 !.yarn/versions
 
+# Developer documentation
+DEVELOPER_GUIDE.md
+SETUP.md
+TROUBLESHOOTING.md
+CONTRIBUTING.md
+
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*

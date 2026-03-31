@@ -10,6 +10,7 @@ import Articles from '@/components/sections/Articles';
 import FeaturedPosts from '@/components/sections/FeaturedPosts';
 import Contact from '@/components/sections/Contact';
 import Footer from '@/components/sections/Footer';
+import AIChat from '@/components/AIChat';
 
 export default function Home() {
   return (
@@ -26,6 +27,7 @@ export default function Home() {
       <FeaturedPosts />
       <Contact />
       <Footer />
+      <AIChat />
     </main>
   );
 }
