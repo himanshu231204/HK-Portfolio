@@ -19,9 +19,12 @@ npm run build        # Build for production
 npm run start        # Start production server
 ```
 
-### Linting
+### Linting & Type Checking
 ```bash
 npm run lint         # Run ESLint on all files
+npx eslint app/ components/  # Lint specific directory
+npx eslint path/to/file.tsx  # Lint specific file
+npx tsc --noEmit    # Type check without building
 ```
 
 ### No Test Framework
@@ -41,8 +44,9 @@ This project does **not** have a test framework configured. Do not add test file
 ### Component Structure
 
 - All components in `components/sections/` must have `'use client'` directive since they use Framer Motion
-- Use functional components with arrow function syntax only when specifically needed
+- Use functional components with `function` keyword (not arrow functions unless specifically needed)
 - Keep components under 200 lines; extract sub-components if larger
+- All interactive elements should use `motion.` variants from Framer Motion
 
 ### Imports
 
@@ -57,12 +61,14 @@ This project does **not** have a test framework configured. Do not add test file
 ```typescript
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { ArrowRight, Mail } from 'lucide-react';
 import { Github, Linkedin } from '@/components/SocialIcons';
 import { fetchGitHubRepos, type GitHubRepo } from '@/utils/api';
 ```
 
 - Use `@/` alias for absolute imports from project root
 - Custom icons should be in `components/SocialIcons.tsx` (not lucide-react)
+- Do NOT use barrel exports (index.ts files)
 
 ### Naming Conventions
 
@@ -79,11 +85,14 @@ import { fetchGitHubRepos, type GitHubRepo } from '@/utils/api';
 - Custom CSS in `app/globals.css` for themes/animations only
 - Color tokens: `slate-50` through `slate-900`, `indigo-400`, etc.
 - Use `glass` class for glassmorphism (defined in globals.css)
+- Custom animations defined in globals.css (e.g., `animate-pulse-slow`)
 
 ### Framer Motion
 
 - Use `motion.` prefix for animated elements
-- Common patterns:
+- Always set `viewport={{ once: true }}` for scroll animations (performance)
+- Use `whileHover` and `whileTap` for interactive elements
+- Example pattern:
   ```typescript
   <motion.div
     initial={{ opacity: 0, y: 20 }}
@@ -92,8 +101,6 @@ import { fetchGitHubRepos, type GitHubRepo } from '@/utils/api';
     transition={{ duration: 0.6 }}
   >
   ```
-- Always set `viewport={{ once: true }}` for scroll animations (performance)
-- Use `whileHover` and `whileTap` for interactive elements
 
 ### Error Handling
 
@@ -111,61 +118,40 @@ import { fetchGitHubRepos, type GitHubRepo } from '@/utils/api';
   }
   ```
 
-### File Organization
+---
+
+## File Organization
 
 ```
 app/
-├── globals.css          # Global styles, animations, custom classes
-├── layout.tsx           # Root layout with metadata
-├── page.tsx             # Main page composing all sections
+├── globals.css        # Global styles, animations, custom classes
+├── layout.tsx          # Root layout with metadata
+├── page.tsx            # Main page composing all sections
 └── favicon.ico
 
 components/
-├── sections/            # Page sections (Hero, About, Skills, etc.)
-│   ├── Navbar.tsx
-│   ├── Hero.tsx
-│   ├── FeaturedPosts.tsx
-│   └── ...
-├── PostCard.tsx         # Reusable post card component
-└── SocialIcons.tsx      # Custom SVG icons (GitHub, LinkedIn)
+├── sections/           # Page sections (Hero, About, Skills, etc.)
+├── PostCard.tsx       # Reusable post card component
+└── SocialIcons.tsx    # Custom SVG icons (GitHub, LinkedIn, Twitter)
 
 hooks/
 └── useScrollAnimation.ts
 
 utils/
-├── api.ts               # API utilities for GitHub
-└── types.ts             # TypeScript interfaces
+├── api.ts             # API utilities for GitHub
+└── types.ts           # TypeScript interfaces
 
 public/
 └── data/
     └── featuredPosts.json  # Featured posts data (LinkedIn)
 ```
 
-### Working with External APIs
-
-- GitHub API: Use `@/utils/api.ts` utilities
-- API calls should be cached with Next.js `fetch` (already configured with `revalidate`)
-- Handle rate limits gracefully
-- Mock data for APIs without public access (e.g., LinkedIn) - use `public/data/featuredPosts.json`
-
-### Metadata & SEO
-
-- Update `app/layout.tsx` metadata for SEO
-- Include: title, description, keywords, openGraph, twitter card
-
-### GitHub Integration
-
-- Use GitHub username: `himanshu231204`
-- Fetch repos sorted by updated date
-- Show loading skeletons while fetching
-- Filter repos by stars or topics for "featured"
-
 ---
 
 ## Common Tasks
 
 ### Adding a New Section
-1. Create `components/sections/NewSection.tsx`
+1. Create `components/sections/NewSection.tsx` with `'use client'`
 2. Add to `app/page.tsx`
 3. Add nav link in `Navbar.tsx`
 
@@ -176,13 +162,28 @@ public/
 - Edit `components/sections/Projects.tsx` - update `featuredProjects` array
 
 ### Updating Featured Posts
-- Edit `public/data/featuredPosts.json` - update posts array (sorted by date automatically)
+- Edit `public/data/featuredPosts.json` - update posts array
+
+---
+
+## External APIs
+
+### GitHub API
+- Username: `himanshu231204`
+- Use `@/utils/api.ts` utilities
+- API calls cached with Next.js `fetch` (revalidate configured)
+- Handle rate limits gracefully
+
+### Featured Posts
+- Use `public/data/featuredPosts.json` (LinkedIn has no public API)
+- Sort by date in the data file
 
 ---
 
 ## Notes
 
-- Lucide-react version 1.7.0 does not include GitHub/LinkedIn icons - use custom SocialIcons.tsx
+- Lucide-react version 1.7.0 does NOT include GitHub/LinkedIn icons - use custom SocialIcons.tsx
 - Tailwind v4 uses CSS-based configuration (no tailwind.config.js)
 - Next.js 16 with App Router
 - All animated components are client-side ('use client')
+- ESLint config uses `eslint-config-next/core-web-vitals` and `eslint-config-next/typescript`
