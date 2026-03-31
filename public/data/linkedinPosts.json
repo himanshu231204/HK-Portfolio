@@ -1,0 +1,55 @@
+{
+  "profileUrl": "https://linkedin.com/in/himanshu-kumar-a0a896228",
+  "posts": [
+    {
+      "id": 1,
+      "title": "AI Commit - Privacy-First Git Assistant",
+      "description": "Just shipped a new AI tool that generates intelligent git commit messages using local LLMs! Privacy-first approach with zero data leaving your machine. Check out the project on GitHub!",
+      "date": "March 2026",
+      "url": "https://www.linkedin.com/feed/",
+      "likes": 45,
+      "comments": 12,
+      "shares": 8
+    },
+    {
+      "id": 2,
+      "title": "Building RAG-Based AI Applications",
+      "description": "Excited to share my journey building RAG-based AI applications! Document Q&A with explainable retrieval is just the beginning. The future of AI is about building systems that are both intelligent and interpretable.",
+      "date": "February 2026",
+      "url": "https://www.linkedin.com/feed/",
+      "likes": 67,
+      "comments": 18,
+      "shares": 12
+    },
+    {
+      "id": 3,
+      "title": "AutoML Studio - End-to-End ML Platform",
+      "description": "AutoML Studio is live! Built an end-to-end ML platform that automates EDA, preprocessing, training, and evaluation. Because every data scientist deserves more time for actual problem-solving.",
+      "date": "January 2026",
+      "url": "https://www.linkedin.com/feed/",
+      "likes": 89,
+      "comments": 24,
+      "shares": 15
+    },
+    {
+      "id": 4,
+      "title": "Open Source Journey Begins",
+      "description": "Started my open source journey! Sharing everything I build publicly. Learning by building - not just consuming tutorials. Grateful for the amazing developer community.",
+      "date": "December 2025",
+      "url": "https://www.linkedin.com/feed/",
+      "likes": 120,
+      "comments": 32,
+      "shares": 20
+    },
+    {
+      "id": 5,
+      "title": "Machine Learning & System Design",
+      "description": "Deep diving into ML evaluation metrics and system design for AI applications. Focusing on retrieval pipelines and deployment strategies. The intersection of ML and software engineering is fascinating!",
+      "date": "November 2025",
+      "url": "https://www.linkedin.com/feed/",
+      "likes": 56,
+      "comments": 15,
+      "shares": 9
+    }
+  ]
+}

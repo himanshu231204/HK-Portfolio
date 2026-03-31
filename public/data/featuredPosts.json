@@ -1,0 +1,40 @@
+{
+  "profileUrl": "https://www.linkedin.com/in/himanshu231204/",
+  "posts": [
+    {
+      "id": 1,
+      "title": "AI Code Review Assistant Launch 🚀",
+      "date": "2026-03-30",
+      "description": "Introduced AI-powered code review inside terminal using run-git. Privacy-first, local LLM-based commit message generation that's changing how developers work.",
+      "link": "https://www.linkedin.com/posts/himanshu231204_ai-code-review-assistant"
+    },
+    {
+      "id": 2,
+      "title": "RAG System Deployment Journey",
+      "date": "2026-03-15",
+      "description": "Successfully deployed a production RAG system for document Q&A. Learnings on retrieval pipelines, embedding optimization, and handling edge cases.",
+      "link": "https://www.linkedin.com/posts/himanshu231204_rag-system"
+    },
+    {
+      "id": 3,
+      "title": "Building AutoML Studio from Scratch",
+      "date": "2026-02-28",
+      "description": "End-to-end ML platform that automates EDA, preprocessing, training, and evaluation. Democratizing machine learning for everyone.",
+      "link": "https://www.linkedin.com/posts/himanshu231204_automl-studio"
+    },
+    {
+      "id": 4,
+      "title": "Open Source Milestone: 50+ Stars",
+      "date": "2026-02-10",
+      "description": "Hit 50+ GitHub stars across my projects! Grateful for the amazing developer community. Open source is about sharing knowledge.",
+      "link": "https://www.linkedin.com/posts/himanshu231204_open-source-milestone"
+    },
+    {
+      "id": 5,
+      "title": "Learning in Public",
+      "date": "2026-01-20",
+      "description": "Why I believe in learning by building — not just consuming tutorials. Sharing everything publicly has accelerated my growth 10x.",
+      "link": "https://www.linkedin.com/posts/himanshu231204_learning-in-public"
+    }
+  ]
+}
