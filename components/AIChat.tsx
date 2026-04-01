@@ -2,7 +2,9 @@
 
 import { useState, useRef, KeyboardEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, X, Send, Trash2, Sparkles, Bot, User, Zap } from 'lucide-react';
+import { MessageCircle, X, Send, Trash2, Sparkles, Bot, User, Zap, Clock3 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useAI, type ChatMessage } from '@/hooks/useAI';
 
 export default function AIChat() {
@@ -72,7 +74,7 @@ export default function AIChat() {
                 </div>
                 <div>
                   <h3 className="text-white font-semibold text-sm">Portfolio Assistant</h3>
-                  <p className="text-slate-400 text-xs">AI-powered helper</p>
+                  <p className="text-slate-400 text-xs">Ask about projects, skills, and contact links</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -94,6 +96,12 @@ export default function AIChat() {
 
             {/* Messages Container */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+              {messages.length === 1 && (
+                <div className="rounded-xl border border-indigo-500/20 bg-indigo-500/10 p-3 text-xs text-indigo-200">
+                  Tip: Ask for &quot;best projects&quot;, &quot;resume summary&quot;, or &quot;all profile links&quot;.
+                </div>
+              )}
+
               {messages.map((msg, index) => (
                 <ChatMessageBubble key={index} message={msg} />
               ))}
@@ -148,7 +156,7 @@ export default function AIChat() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyPress}
-                  placeholder="Ask me about Himanshu..."
+                  placeholder="Ask about skills, projects, links, certifications..."
                   disabled={isLoading}
                   className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2.5 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500/50 disabled:opacity-50"
                 />
@@ -173,6 +181,7 @@ export default function AIChat() {
 // Chat Message Bubble Component
 function ChatMessageBubble({ message }: { message: ChatMessage }) {
   const isUser = message.role === 'user';
+  const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   return (
     <motion.div
@@ -194,12 +203,50 @@ function ChatMessageBubble({ message }: { message: ChatMessage }) {
       </div>
 
       {/* Message Bubble */}
-      <div className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm ${
+      <div className={`max-w-[78%] rounded-2xl px-4 py-3 text-sm ${
         isUser 
           ? 'bg-indigo-600/80 text-white rounded-tr-md' 
           : 'bg-white/10 text-slate-200 rounded-tl-md'
       }`}>
-        <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
+        {isUser ? (
+          <p className="whitespace-pre-wrap leading-relaxed">{message.content}</p>
+        ) : (
+          <div className="prose prose-sm prose-invert max-w-none prose-p:my-2 prose-ul:my-2 prose-ol:my-2 prose-li:my-0 prose-headings:my-2 prose-code:text-cyan-300 prose-strong:text-white">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                a: ({ ...props }) => (
+                  <a {...props} target="_blank" rel="noopener noreferrer" className="text-cyan-300 hover:text-cyan-200 underline" />
+                ),
+                code: ({ className, children, ...props }) => {
+                  const isInline = !className;
+                  if (isInline) {
+                    return (
+                      <code {...props} className="rounded bg-slate-800 px-1 py-0.5 text-xs text-cyan-300">
+                        {children}
+                      </code>
+                    );
+                  }
+
+                  return (
+                    <code {...props} className={`${className} text-xs text-cyan-200`}>
+                      {children}
+                    </code>
+                  );
+                },
+                pre: ({ children }) => (
+                  <pre className="overflow-x-auto rounded-lg bg-slate-900/80 p-3">{children}</pre>
+                ),
+              }}
+            >
+              {message.content}
+            </ReactMarkdown>
+          </div>
+        )}
+        <div className={`mt-2 flex items-center gap-1 text-[10px] ${isUser ? 'text-indigo-100/70 justify-end' : 'text-slate-400'}`}>
+          <Clock3 size={10} />
+          {time}
+        </div>
       </div>
     </motion.div>
   );

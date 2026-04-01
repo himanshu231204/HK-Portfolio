@@ -10,17 +10,18 @@ export interface ChatMessage {
 
 const WELCOME_MESSAGE: ChatMessage = {
   role: 'assistant',
-  content: "Hi! 👋 I'm Himanshu's AI assistant. Ask me about his projects, skills, certifications, or experience. I can help you learn more about him!",
+  content:
+    "Hi! I can help you explore Himanshu's profile quickly.\n\n- Ask about **projects** and tech stack\n- Request **all profile links**\n- Get a short **internship-ready summary**",
   timestamp: Date.now(),
 };
 
 // Quick suggestion prompts
 const QUICK_SUGGESTIONS = [
-  'Tell me about your projects',
-  'What skills do you have?',
-  'Show your certifications',
-  'What is your experience?',
-  'How can I contact you?',
+  'Give me a 30-second profile summary',
+  'Show top projects with GitHub links',
+  'List AI/ML skills and tools',
+  'Show certifications with dates',
+  'How can I contact Himanshu quickly?',
 ];
 
 export function useAI() {
