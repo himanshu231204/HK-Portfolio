@@ -9,20 +9,55 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Himanshu Kumar | AI/ML & GenAI Engineer",
+  metadataBase: new URL('https://himanshukumar.me'),
+  title: {
+    default: "Himanshu Kumar | AI/ML & GenAI Engineer",
+    template: "%s | Himanshu Kumar",
+  },
   description: "AI/ML Developer | Open Source Builder | Creator of RUN-GIT - Building Tools That Solve Real Problems",
-  keywords: ["AI", "ML", "GenAI", "Machine Learning", "Open Source", "Developer", "Portfolio"],
+  keywords: ["AI", "ML", "GenAI", "Machine Learning", "Open Source", "Developer", "Portfolio", "Himanshu Kumar"],
   authors: [{ name: "Himanshu Kumar" }],
+  creator: "Himanshu Kumar",
+  publisher: "Himanshu Kumar",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   openGraph: {
     title: "Himanshu Kumar | AI/ML & GenAI Engineer",
     description: "Building Tools That Solve Real Problems - AI/ML Developer & Open Source Builder",
-    type: "website",
+    url: "https://himanshukumar.me",
+    siteName: "Himanshu Kumar Portfolio",
     locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "Himanshu Kumar Portfolio Preview",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Himanshu Kumar | AI/ML & GenAI Engineer",
     description: "Building Tools That Solve Real Problems",
+    creator: "@himanshu231204",
+    images: ["/og-image.svg"],
+  },
+  alternates: {
+    canonical: "https://himanshukumar.me",
+    languages: {
+      en: "https://himanshukumar.me",
+    },
   },
 };
 

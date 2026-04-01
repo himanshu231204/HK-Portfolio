@@ -35,29 +35,25 @@ This project does **not** have a test framework configured. Do not add test file
 ## Code Style Guidelines
 
 ### TypeScript
-
 - **Always use TypeScript** for new files (.tsx/.ts)
 - Prefer `interface` over `type` for object shapes
 - Use explicit return types for utility functions
 - Never use `any` - use `unknown` if type is truly unknown
 
 ### Component Structure
-
-- All components in `components/sections/` must have `'use client'` directive since they use Framer Motion
-- Use functional components with `function` keyword (not arrow functions unless specifically needed)
+- All components in `components/sections/` must have `'use client'` directive (they use Framer Motion)
+- Use functional components with `function` keyword (not arrow functions unless needed)
 - Keep components under 200 lines; extract sub-components if larger
 - All interactive elements should use `motion.` variants from Framer Motion
 
-### Imports
-
-**Order (eslint will enforce):**
+### Imports Order (eslint enforces this)
 1. React imports (`import { useState } from 'react'`)
 2. Next.js imports
 3. External libraries (`framer-motion`, `lucide-react`)
 4. Internal imports (`@/components/`, `@/utils/`)
 5. Relative imports
 
-**Example:**
+Example:
 ```typescript
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
@@ -71,52 +67,37 @@ import { fetchGitHubRepos, type GitHubRepo } from '@/utils/api';
 - Do NOT use barrel exports (index.ts files)
 
 ### Naming Conventions
-
 - **Components**: PascalCase (`Navbar.tsx`, `GitHubStats.tsx`)
 - **Utilities**: camelCase (`api.ts`, `useScrollAnimation.ts`)
 - **Constants**: SCREAMING_SNAKE_CASE for config values
 - **Files**: kebab-case for non-component files
-- **CSS Classes**: Use Tailwind utility classes; custom classes in globals.css use kebab-case
 
 ### Tailwind CSS
-
 - Use Tailwind v4 syntax with `@apply` sparingly
 - Prefer inline Tailwind classes over custom CSS
 - Custom CSS in `app/globals.css` for themes/animations only
 - Color tokens: `slate-50` through `slate-900`, `indigo-400`, etc.
 - Use `glass` class for glassmorphism (defined in globals.css)
-- Custom animations defined in globals.css (e.g., `animate-pulse-slow`)
+- Custom animations in globals.css (e.g., `animate-pulse-slow`)
 
 ### Framer Motion
-
 - Use `motion.` prefix for animated elements
 - Always set `viewport={{ once: true }}` for scroll animations (performance)
 - Use `whileHover` and `whileTap` for interactive elements
 - Example pattern:
-  ```typescript
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.6 }}
-  >
-  ```
+```typescript
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  viewport={{ once: true }}
+  transition={{ duration: 0.6 }}
+>
+```
 
 ### Error Handling
-
 - API calls must have try/catch with user-friendly error messages
 - Show loading states with skeletons, not spinners
 - Never expose internal errors to users
-- Example:
-  ```typescript
-  try {
-    const data = await fetchGitHubRepos('username');
-    setRepos(data);
-  } catch (error) {
-    console.error('Error fetching repos:', error);
-    setError('Failed to load repositories');
-  }
-  ```
 
 ---
 
@@ -125,12 +106,12 @@ import { fetchGitHubRepos, type GitHubRepo } from '@/utils/api';
 ```
 app/
 ├── globals.css        # Global styles, animations, custom classes
-├── layout.tsx          # Root layout with metadata
-├── page.tsx            # Main page composing all sections
+├── layout.tsx         # Root layout with metadata
+├── page.tsx           # Main page composing all sections
 └── favicon.ico
 
 components/
-├── sections/           # Page sections (Hero, About, Skills, etc.)
+├── sections/          # Page sections (Hero, About, Skills, etc.)
 ├── PostCard.tsx       # Reusable post card component
 └── SocialIcons.tsx    # Custom SVG icons (GitHub, LinkedIn, Twitter)
 
@@ -141,9 +122,8 @@ utils/
 ├── api.ts             # API utilities for GitHub
 └── types.ts           # TypeScript interfaces
 
-public/
-└── data/
-    └── featuredPosts.json  # Featured posts data (LinkedIn)
+public/data/
+└── featuredPosts.json  # Featured posts data (LinkedIn)
 ```
 
 ---
@@ -154,9 +134,6 @@ public/
 1. Create `components/sections/NewSection.tsx` with `'use client'`
 2. Add to `app/page.tsx`
 3. Add nav link in `Navbar.tsx`
-
-### Adding a New Skill
-- Edit `components/sections/Skills.tsx` - add to appropriate category
 
 ### Modifying Featured Projects
 - Edit `components/sections/Projects.tsx` - update `featuredProjects` array
@@ -176,14 +153,12 @@ public/
 
 ### Featured Posts
 - Use `public/data/featuredPosts.json` (LinkedIn has no public API)
-- Sort by date in the data file
 
 ---
 
 ## Notes
 
-- Lucide-react version 1.7.0 does NOT include GitHub/LinkedIn icons - use custom SocialIcons.tsx
+- Lucide-react v1.7.0 does NOT include GitHub/LinkedIn icons - use custom SocialIcons.tsx
 - Tailwind v4 uses CSS-based configuration (no tailwind.config.js)
-- Next.js 16 with App Router
-- All animated components are client-side ('use client')
-- ESLint config uses `eslint-config-next/core-web-vitals` and `eslint-config-next/typescript`
+- Next.js 16 with App Router, all animated components are client-side ('use client')
+- ESLint: `eslint-config-next/core-web-vitals` + `eslint-config-next/typescript`
