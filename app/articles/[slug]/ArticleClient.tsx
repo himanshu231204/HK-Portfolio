@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { Calendar, Tag, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Calendar, ArrowLeft, ArrowRight } from 'lucide-react';
 
 interface ArticleMeta {
   title: string;
@@ -18,24 +18,7 @@ export default function ArticleClient({ slug }: { slug: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    fetch(`/articles/${slug}.md`)
-      .then(res => {
-        if (!res.ok) throw new Error('Not found');
-        return res.text();
-      })
-      .then(content => {
-        const parsed = parseMarkdown(content);
-        setArticle(parsed);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError(true);
-        setLoading(false);
-      });
-  }, [slug]);
-
-  function parseMarkdown(content: string) {
+  const parseMarkdown = useCallback((content: string) => {
     const match = content.match(/^---\n([\s\S]*?)\n---/);
     if (!match) return null;
 
@@ -50,8 +33,7 @@ export default function ArticleClient({ slug }: { slug: string }) {
     });
 
     const body = content.slice(match[0].length).trim();
-    
-    // Simple markdown to HTML conversion
+
     const html = body
       .replace(/^# (.*$)/gm, '<h1 class="text-3xl font-bold mb-4 mt-8">$1</h1>')
       .replace(/^## (.*$)/gm, '<h2 class="text-2xl font-semibold mb-3 mt-6">$1</h2>')
@@ -72,7 +54,24 @@ export default function ArticleClient({ slug }: { slug: string }) {
       tags: frontmatter.tags ? frontmatter.tags.split(',').map(t => t.trim()) : [],
       content: `<p class="mb-4">${html}</p>`,
     };
-  }
+  }, []);
+
+  useEffect(() => {
+    fetch(`/articles/${slug}.md`)
+      .then(res => {
+        if (!res.ok) throw new Error('Not found');
+        return res.text();
+      })
+      .then(content => {
+        const parsed = parseMarkdown(content);
+        setArticle(parsed);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
+  }, [slug, parseMarkdown]);
 
   if (loading) {
     return (
@@ -95,7 +94,7 @@ export default function ArticleClient({ slug }: { slug: string }) {
       <div className="min-h-screen pt-24 pb-12">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <h1 className="text-3xl font-bold mb-4">Article Not Found</h1>
-          <p className="text-slate-400 mb-6">The article you're looking for doesn't exist.</p>
+          <p className="text-slate-400 mb-6">The article you&apos;re looking for doesn&apos;t exist.</p>
           <Link href="/" className="text-cyan-400 hover:underline">
             ← Back to Home
           </Link>

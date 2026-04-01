@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  statuses: write
+
 env:
   NODE_VERSION: '20'
 
@@ -28,7 +32,7 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: npm run lint
+        run: npx eslint app components hooks utils
 
       - name: Notify Vercel lint status
         if: always()
