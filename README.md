@@ -30,4 +30,4 @@ See [DEVELOPER_GUIDE.md](DEVELOPER_GUIDE.md) for how to update the portfolio wit
 
 ---
 
-Built with love
+Built with love.
