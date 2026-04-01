@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+interface HistoryMessage {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 // System prompt for the AI assistant
 const SYSTEM_PROMPT = `You are an AI assistant for Himanshu Kumar's portfolio.
 Answer questions about his projects, skills, certifications, and experience.
@@ -66,30 +71,24 @@ export async function POST(request: NextRequest) {
       }, { status: 500 });
     }
 
-    // Build conversation context
-    let conversation = SYSTEM_PROMPT + "\n\n";
-    conversation += "User: Hello, who are you?\n";
-    conversation += "Assistant: I'm Himanshu's portfolio AI assistant. I can tell you about his projects, skills, and experience!\n";
-    
-    // Add conversation history
-    if (history && Array.isArray(history)) {
-      const recentHistory = history.slice(-5);
-      recentHistory.forEach((msg: { role: string; content: string }) => {
-        if (msg.role === 'user') {
-          conversation += `User: ${msg.content}\n`;
-        } else {
-          conversation += `Assistant: ${msg.content}\n`;
-        }
-      });
-    }
-    
-    conversation += `User: ${message}\n`;
-    conversation += "Assistant:";
+    const configuredModel = process.env.HUGGINGFACE_CHAT_MODEL || 'katanemo/Arch-Router-1.5B:hf-inference';
+    const safeHistory: HistoryMessage[] = Array.isArray(history)
+      ? history
+          .slice(-5)
+          .filter(
+            (msg: unknown): msg is HistoryMessage =>
+              typeof msg === 'object' &&
+              msg !== null &&
+              (msg as { role?: unknown }).role !== undefined &&
+              (msg as { content?: unknown }).content !== undefined &&
+              ((msg as { role?: unknown }).role === 'user' || (msg as { role?: unknown }).role === 'assistant') &&
+              typeof (msg as { content?: unknown }).content === 'string'
+          )
+      : [];
 
-    // Call Hugging Face Inference API with OmniCoder-9B
-    // NEW ENDPOINT: router.huggingface.co
+    // Call Hugging Face Router Chat Completions API
     const response = await fetch(
-      'https://router.huggingface.co/Tesslate/OmniCoder-9B/v1/chat/completions',
+      'https://router.huggingface.co/v1/chat/completions',
       {
         method: 'POST',
         headers: {
@@ -97,12 +96,10 @@ export async function POST(request: NextRequest) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          model: configuredModel,
           messages: [
             { role: 'system', content: SYSTEM_PROMPT },
-            ...(history ? history.slice(-5).map((m: { role: string; content: string }) => ({
-              role: m.role === 'user' ? 'user' : 'assistant',
-              content: m.content
-            })) : []),
+            ...safeHistory,
             { role: 'user', content: message }
           ],
           max_tokens: 200,
@@ -115,7 +112,7 @@ export async function POST(request: NextRequest) {
       const errorText = await response.text();
       console.error('Hugging Face API Error:', response.status, errorText);
       return NextResponse.json({ 
-        error: `AI service error: ${response.status}` 
+        error: `AI service error: ${response.status}. Check HUGGINGFACE_CHAT_MODEL or API key.` 
       }, { status: 500 });
     }
 
