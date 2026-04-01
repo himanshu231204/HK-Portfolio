@@ -8,21 +8,24 @@ interface ContactCardProps {
   label: string;
   value: string;
   href?: string;
+  copyText?: string;
   delay?: number;
 }
 
-export default function ContactCard({ icon, label, value, href, delay = 0 }: ContactCardProps) {
+export default function ContactCard({ icon, label, value, href, copyText, delay = 0 }: ContactCardProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
-    if (label === 'Email') {
-      try {
-        await navigator.clipboard.writeText('himanshu231204@gmail.com');
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      } catch (err) {
-        console.error('Failed to copy:', err);
-      }
+    if (!copyText) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(copyText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
     }
   };
 
@@ -48,7 +51,7 @@ export default function ContactCard({ icon, label, value, href, delay = 0 }: Con
           <p className="text-slate-200 font-medium truncate">{value}</p>
         </div>
 
-        {label === 'Email' && (
+        {copyText && (
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}

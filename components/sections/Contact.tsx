@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, MapPin, Send, Check, AlertCircle, Loader2 } from 'lucide-react';
+import { Mail, MapPin, Send, Check, AlertCircle, Loader2, MessageCircle } from 'lucide-react';
 import { Github, Linkedin, Twitter } from '@/components/SocialIcons';
 import ContactCard from '@/components/ContactCard';
 
@@ -18,6 +18,7 @@ const contactDetails = [
     label: 'Email',
     value: 'himanshu231204@gmail.com',
     href: 'mailto:himanshu231204@gmail.com',
+    copyText: 'himanshu231204@gmail.com',
   },
   {
     icon: <Github className="text-white" size={22} />,
@@ -36,6 +37,13 @@ const contactDetails = [
     label: 'Twitter (X)',
     value: 'twitter.com/himanshu231204',
     href: 'https://twitter.com/himanshu231204',
+  },
+  {
+    icon: <MessageCircle className="text-green-400" size={22} />,
+    label: 'WhatsApp',
+    value: '+91-8777579795',
+    href: 'https://wa.me/918777579795',
+    copyText: '+918777579795',
   },
   {
     icon: <MapPin className="text-red-400" size={22} />,
@@ -189,6 +197,7 @@ export default function Contact() {
                   label={info.label}
                   value={info.value}
                   href={info.href}
+                  copyText={info.copyText}
                   delay={index * 0.1}
                 />
               ))}
