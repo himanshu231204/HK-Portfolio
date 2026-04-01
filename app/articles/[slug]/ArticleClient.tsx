@@ -42,40 +42,114 @@ export default function ArticleClient({ slug }: { slug: string }) {
 
     const body = content.slice(match[0].length).trim();
     const extractedHeadings: Heading[] = [];
+    
+    // Store code blocks to protect them
+    const codePlaceholders: Record<string, string> = {};
+    let codeCount = 0;
+    
+    let html = body
+      // Protect code blocks
+      .replace(/```[\s\S]*?```/g, (match) => {
+        const placeholder = `__CODE_BLOCK_${codeCount}__`;
+        codePlaceholders[placeholder] = match
+          .replace(/^```(\w+)?\n/, '')
+          .replace(/\n```$/, '')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        codeCount++;
+        return placeholder;
+      });
 
-    const html = body
-      .replace(/^# (.*$)/gm, (_, text) => {
-        const id = `heading-${Object.keys(extractedHeadings).length}`;
-        extractedHeadings.push({ id, text, level: 1 });
-        return `<h1 id="${id}" class="text-4xl font-bold mb-6 mt-12 text-white scroll-mt-24">$1</h1>`;
-      })
-      .replace(/^## (.*$)/gm, (_, text) => {
-        const id = `heading-${Object.keys(extractedHeadings).length}`;
-        extractedHeadings.push({ id, text, level: 2 });
-        return `<h2 id="${id}" class="text-2xl font-bold mb-4 mt-8 text-white scroll-mt-24">$1</h2>`;
-      })
-      .replace(/^### (.*$)/gm, (_, text) => {
-        const id = `heading-${Object.keys(extractedHeadings).length}`;
-        extractedHeadings.push({ id, text, level: 3 });
-        return `<h3 id="${id}" class="text-xl font-semibold mb-3 mt-6 text-white scroll-mt-24">$1</h3>`;
-      })
-      .replace(/^> (.*$)/gm, '<blockquote class="border-l-4 border-cyan-400 pl-4 py-2 my-4 italic text-slate-300 bg-white/5 p-4 rounded-r-lg">$1</blockquote>')
+    // Process headings
+    html = html.replace(/^### (.*$)/gm, (_, text) => {
+      const id = `heading-${extractedHeadings.length}`;
+      extractedHeadings.push({ id, text, level: 3 });
+      return `__H3_${id}__${text}__/H3__`;
+    });
+
+    html = html.replace(/^## (.*$)/gm, (_, text) => {
+      const id = `heading-${extractedHeadings.length}`;
+      extractedHeadings.push({ id, text, level: 2 });
+      return `__H2_${id}__${text}__/H2__`;
+    });
+
+    html = html.replace(/^# (.*$)/gm, (_, text) => {
+      const id = `heading-${extractedHeadings.length}`;
+      extractedHeadings.push({ id, text, level: 1 });
+      return `__H1_${id}__${text}__/H1__`;
+    });
+
+    // Process inline formatting (before paragraphs)
+    html = html
       .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-white">$1</strong>')
       .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
       .replace(/`([^`]+)`/g, '<code class="bg-slate-800 px-2 py-1 rounded text-sm font-mono text-cyan-300">$1</code>')
-      .replace(/```(\w+)?\n([\s\S]*?)```/g, '<pre class="bg-slate-900 border border-slate-800 p-4 rounded-lg overflow-x-auto mb-6 shadow-lg"><code class="text-sm font-mono text-slate-300">$2</code></pre>')
-      .replace(/^\| /gm, '<tr><td class="border border-slate-700 px-4 py-2">')
-      .replace(/\n\n+/g, '</p><p class="mb-4 leading-relaxed">')
-      .replace(/^- (.*$)/gm, '<li class="ml-6 mb-2 flex items-start"><span class="text-cyan-400 mr-3 mt-1">•</span><span>$1</span></li>')
-      .replace(/^(\d+)\. (.*$)/gm, '<li class="ml-6 mb-2 flex items-start"><span class="text-cyan-400 mr-3 font-semibold">$1.</span><span>$2</span></li>')
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors" target="_blank" rel="noopener">$1</a>');
+
+    // Process blockquotes
+    html = html.replace(/^> (.*$)/gm, '__BLOCKQUOTE__$1__/BLOCKQUOTE__');
+
+    // Split into blocks and process
+    const blocks = html.split('\n\n').filter(block => block.trim());
+    let processedBlocks = blocks.map(block => {
+      // Check if it's a list
+      if (block.match(/^[-*]\s/m)) {
+        const items = block.split('\n').filter(line => line.match(/^[-*]\s/));
+        return '<ul class="ml-6 mb-4 space-y-2">' + 
+          items.map(item => {
+            const text = item.replace(/^[-*]\s+/, '');
+            return `<li class="flex items-start"><span class="text-cyan-400 mr-3 mt-1">•</span><span>${text}</span></li>`;
+          }).join('') + 
+          '</ul>';
+      }
+      
+      // Check if it's an ordered list
+      if (block.match(/^\d+\.\s/m)) {
+        const items = block.split('\n').filter(line => line.match(/^\d+\.\s/));
+        return '<ol class="ml-6 mb-4 space-y-2">' + 
+          items.map(item => {
+            const num = item.match(/^(\d+)\./)?.[1];
+            const text = item.replace(/^\d+\.\s+/, '');
+            return `<li class="flex items-start"><span class="text-cyan-400 mr-3 font-semibold">${num}.</span><span>${text}</span></li>`;
+          }).join('') + 
+          '</ol>';
+      }
+      
+      // Check if it's a blockquote
+      if (block.includes('__BLOCKQUOTE__')) {
+        return block.replace(/__BLOCKQUOTE__(.*?)__\/BLOCKQUOTE__/g, '<blockquote class="border-l-4 border-cyan-400 pl-4 py-2 my-4 italic text-slate-300 bg-white/5 p-4 rounded-r-lg">$1</blockquote>');
+      }
+      
+      // Regular paragraph
+      return `<p class="mb-4 leading-relaxed">${block}</p>`;
+    }).join('');
+
+    // Restore code blocks
+    Object.entries(codePlaceholders).forEach(([placeholder, code]) => {
+      processedBlocks = processedBlocks.replace(
+        placeholder,
+        `<pre class="bg-slate-900 border border-slate-800 p-4 rounded-lg overflow-x-auto mb-6 shadow-lg"><code class="text-sm font-mono text-slate-300">${code}</code></pre>`
+      );
+    });
+
+    // Convert heading placeholders to actual HTML
+    let finalHtml = processedBlocks
+      .replace(/__H1_(heading-\d+)__(.*?)__\/H1__/g, (_, id, text) => 
+        `<h1 id="${id}" class="text-4xl font-bold mb-6 mt-12 text-white scroll-mt-24">${text}</h1>`
+      )
+      .replace(/__H2_(heading-\d+)__(.*?)__\/H2__/g, (_, id, text) => 
+        `<h2 id="${id}" class="text-2xl font-bold mb-4 mt-8 text-white scroll-mt-24">${text}</h2>`
+      )
+      .replace(/__H3_(heading-\d+)__(.*?)__\/H3__/g, (_, id, text) => 
+        `<h3 id="${id}" class="text-xl font-semibold mb-3 mt-6 text-white scroll-mt-24">${text}</h3>`
+      );
 
     return {
       title: frontmatter.title || '',
       excerpt: frontmatter.excerpt || '',
       date: frontmatter.date || '',
       tags: frontmatter.tags ? frontmatter.tags.split(',').map(t => t.trim()) : [],
-      content: `<p class="mb-4 leading-relaxed">${html}</p>`,
+      content: finalHtml,
       headings: extractedHeadings,
     };
   }, []);
