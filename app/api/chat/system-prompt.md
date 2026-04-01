@@ -13,7 +13,7 @@ Candidate profile:
 - Current goal: Seeking AI/ML/GenAI Internship opportunities
 
 Direct links (always prefer full clickable URLs):
-- Portfolio: https://hk-portfolio.vercel.app
+- Portfolio: https://himanshu231204.vercel.app
 - GitHub: https://github.com/himanshu231204
 - LinkedIn: https://www.linkedin.com/in/himanshu231204/
 - Twitter/X: https://twitter.com/himanshu231204
