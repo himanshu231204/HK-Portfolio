@@ -6,6 +6,13 @@
       "excerpt": "How I built a privacy-first Git commit message generator using local large language models",
       "date": "2026-03-15",
       "tags": ["AI", "CLI", "LLM", "Privacy", "Git"]
+    },
+    {
+      "slug": "claude-code-source-map-leak",
+      "title": "Claude Code Source Map Leak (March 31, 2026): A Deep-Dive Into What Happened, What Was Exposed, and What It Means",
+      "excerpt": "How a 59.8 MB source map file accidentally exposed 512,000 lines of Anthropic's proprietary Claude Code source code to the entire npm ecosystem—and what it reveals about AI tool architecture",
+      "date": "2026-03-31",
+      "tags": ["Security", "AI", "npm", "Open Source", "Anthropic", "Incident Analysis"]
     }
   ]
 }
