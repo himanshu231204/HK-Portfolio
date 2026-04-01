@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion';
 import { Sparkles, Code, GraduationCap } from 'lucide-react';
-import Image from 'next/image';
 
 export default function About() {
   const highlights = [

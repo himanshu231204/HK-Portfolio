@@ -55,6 +55,7 @@ export default function GitHubStats() {
           whileHover={{ scale: 1.02 }}
           className="p-4 rounded-2xl bg-gradient-to-br from-orange-500/10 to-pink-500/10 backdrop-blur-xl border border-white/10 shadow-lg hover:shadow-[0_0_40px_rgba(0,217,255,0.15)] hover:border-cyan-400/30 transition-all duration-300 mb-4"
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img 
             src={`https://streak-stats.demolab.com/?user=${GITHUB_USERNAME}&theme=tokyonight&hide_border=true&background=0D1117&ring=00D9FF&fire=FF6E00&currStreakLabel=00D9FF`}
             alt="GitHub Streak"
@@ -71,6 +72,7 @@ export default function GitHubStats() {
           whileHover={{ scale: 1.02 }}
           className="p-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg hover:shadow-[0_0_40px_rgba(0,217,255,0.15)] hover:border-cyan-400/30 transition-all duration-300 mb-6"
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img 
             src={`https://github-readme-activity-graph.vercel.app/graph?username=${GITHUB_USERNAME}&theme=tokyo-night&hide_border=true&bg_color=0D1117&color=00D9FF&line=00D9FF&point=FF6E00`}
             alt="Activity Graph"

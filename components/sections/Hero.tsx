@@ -146,6 +146,8 @@ export default function Hero() {
               transition={{ duration: 0.3 }}
               className="relative"
             >
+              {/* Using img here for DOM fallback handling on load error */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/mypic.jpeg"
                 alt="Himanshu Kumar"

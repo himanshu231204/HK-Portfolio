@@ -7,7 +7,6 @@ import {
   Wrench, 
   Code2, 
   Database, 
-  Cloud, 
   Terminal, 
   GitBranch,
   FlaskConical,
