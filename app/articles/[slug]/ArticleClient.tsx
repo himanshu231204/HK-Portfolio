@@ -133,7 +133,7 @@ export default function ArticleClient({ slug }: { slug: string }) {
     });
 
     // Convert heading placeholders to actual HTML
-    let finalHtml = processedBlocks
+    const finalHtml = processedBlocks
       .replace(/__H1_(heading-\d+)__(.*?)__\/H1__/g, (_, id, text) => 
         `<h1 id="${id}" class="text-4xl font-bold mb-6 mt-12 text-white scroll-mt-24">${text}</h1>`
       )
