@@ -42,7 +42,6 @@ export default function ArticleClient({ slug }: { slug: string }) {
 
     const body = content.slice(match[0].length).trim();
     const extractedHeadings: Heading[] = [];
-    let headingCounter: Record<number, number> = {};
 
     const html = body
       .replace(/^# (.*$)/gm, (_, text) => {
