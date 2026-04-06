@@ -35,6 +35,15 @@
       "github": "https://github.com/himanshu231204/run-git",
       "tags": ["Git", "CLI", "AI", "Developer Tools"],
       "featured": true
-    }
+    },
+    {
+  "title": "mcp-web-search",
+  "description": "Engineered a real-time MCP-compliant Web Search Server using FastAPI and Server-Sent Events (SSE), enabling seamless AI-agent integration. Solved complex issues like protocol mismatches, streaming timeouts, and deployment inconsistencies while ensuring CI reliability and production stability.",
+  "icon": "Globe",
+  "gradient": "from-blue-500 to-indigo-600",
+  "github": "https://github.com/himanshu231204/mcp-web-search",
+  "tags": ["FastAPI", "MCP", "SSE", "AI Systems", "Backend Engineering", "OpenCode"],
+  "featured": true
+}
   ]
 }
