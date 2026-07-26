@@ -22,7 +22,9 @@ const skillCategories = [
     skills: [
       { name: "Python", icon: Code2 },
       { name: "LangChain", icon: Boxes },
+      { name: "LangGraph", icon: Boxes },
       { name: "FAISS", icon: Database },
+      { name: "Sentence Transformers", icon: Brain },
       { name: "Scikit-learn", icon: Brain },
       { name: "Generative AI", icon: FlaskConical },
       { name: "LLM Applications", icon: Workflow },
@@ -46,6 +48,7 @@ const skillCategories = [
       { name: "Docker", icon: Container },
       { name: "Git", icon: GitBranch },
       { name: "VS Code", icon: Code2 },
+      { name: "MCP", icon: Workflow },
     ]
   }
 ];
