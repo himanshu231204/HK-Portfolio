@@ -2,48 +2,66 @@
   "projects": [
     {
       "title": "AI Commit",
-      "description": "Generates intelligent Git commit messages using local LLMs (offline, privacy-first CLI Tool)",
+      "description": "Generates intelligent Git commit messages using local Ollama AI models. Free, private, and works offline!",
       "icon": "Terminal",
       "gradient": "from-green-500 to-emerald-600",
       "github": "https://github.com/himanshu231204/ai-commit",
-      "tags": ["CLI", "LLM", "Privacy"],
+      "tags": ["CLI", "LLM", "Privacy", "Ollama"],
       "featured": true
     },
     {
       "title": "RAG-based AI Application",
-      "description": "Document Q&A system with explainable retrieval",
+      "description": "End-to-end RAG pipeline with LangChain, ChromaDB & Sentence Transformers for semantic search and LLM-powered Q&A",
       "icon": "Sparkles",
       "gradient": "from-purple-500 to-pink-600",
       "github": "https://github.com/himanshu231204/ragnova-rag-chatbot",
-      "tags": ["RAG", "NLP", "LLM"],
+      "tags": ["RAG", "NLP", "LLM", "ChromaDB"],
       "featured": true
     },
     {
       "title": "AutoML Studio",
-      "description": "End-to-end ML platform that automates EDA, preprocessing, training, and evaluation",
+      "description": "End-to-end ML platform that automates EDA, preprocessing, training, and evaluation without writing code",
       "icon": "Workflow",
       "gradient": "from-blue-500 to-cyan-600",
       "github": "https://github.com/himanshu231204/AutoML-Studio-Pro-",
-      "tags": ["AutoML", "ML", "Platform"],
+      "tags": ["AutoML", "ML", "Platform", "No-Code"],
       "featured": true
     },
     {
       "title": "run-git",
-      "description": "AI-powered Git CLI tool that automates commits, generates messages, and provides intelligent code review directly from your terminal",
+      "description": "Lightweight Python CLI tool that simplifies Git workflows — stage, commit, and push with a single command",
       "icon": "Toolbox",
       "gradient": "from-purple-500 to-indigo-600",
       "github": "https://github.com/himanshu231204/run-git",
-      "tags": ["Git", "CLI", "AI", "Developer Tools"],
+      "tags": ["Git", "CLI", "Python", "PyPI"],
       "featured": true
     },
     {
-  "title": "mcp-web-search",
-  "description": "Engineered a real-time MCP-compliant Web Search Server using FastAPI and Server-Sent Events (SSE), enabling seamless AI-agent integration. Solved complex issues like protocol mismatches, streaming timeouts, and deployment inconsistencies while ensuring CI reliability and production stability.",
-  "icon": "Globe",
-  "gradient": "from-blue-500 to-indigo-600",
-  "github": "https://github.com/himanshu231204/mcp-web-search",
-  "tags": ["FastAPI", "MCP", "SSE", "AI Systems", "Backend Engineering", "OpenCode"],
-  "featured": true
-}
+      "title": "mcp-web-search",
+      "description": "Production-ready MCP server for web search with FastAPI, JSON-RPC, and tested protocol compatibility",
+      "icon": "Toolbox",
+      "gradient": "from-blue-500 to-indigo-600",
+      "github": "https://github.com/himanshu231204/mcp-web-search",
+      "tags": ["FastAPI", "MCP", "SSE", "AI Systems"],
+      "featured": true
+    },
+    {
+      "title": "ML Mastery",
+      "description": "Structured Machine Learning learning repository with hands-on notebooks, practical examples, and quick reference guides",
+      "icon": "Workflow",
+      "gradient": "from-cyan-500 to-blue-600",
+      "github": "https://github.com/himanshu231204/ml-mastery",
+      "tags": ["Machine Learning", "Education", "Notebooks", "Python"],
+      "featured": true
+    },
+    {
+      "title": "OpenAgent Eval",
+      "description": "Local-first evaluation framework for RAG systems and AI Agents — 18+ metrics, CLI + SDK, framework-agnostic",
+      "icon": "Sparkles",
+      "gradient": "from-violet-500 to-purple-600",
+      "github": "https://github.com/OpenAgentHQ/openagent-eval",
+      "tags": ["AI Evaluation", "RAG", "CLI", "Open Source"],
+      "featured": true
+    }
   ]
 }
