@@ -1,90 +1,73 @@
-# Agent Guidelines for This Repository
+# AGENTS.md — Portfolio Repo Guidelines + Auto-Update Agent
 
-## Project Overview
-
-This is a **Next.js 16 portfolio website** built with TypeScript, Tailwind CSS v4, and Framer Motion. It showcases a personal developer portfolio with dynamic GitHub API integration.
+This file is read by opencode before it touches anything in this repo.
+Also read `CONTEXT.md` — it's the source of truth about Himanshu;
+never invent facts that aren't in it or in the live data pulled from
+GitHub/LinkedIn/Twitter.
 
 ---
+
+## Part 1 — Project Overview
+
+Next.js 16 portfolio website, TypeScript, Tailwind CSS v4, Framer
+Motion. Showcases a personal developer portfolio with dynamic GitHub
+API integration.
 
 ## Build / Lint / Test Commands
 
-### Development
 ```bash
-npm run dev          # Start dev server at http://localhost:3000
-```
-
-### Production
-```bash
-npm run build        # Build for production
+npm run dev          # Dev server at http://localhost:3000
+npm run build        # Production build
 npm run start        # Start production server
+npm run lint         # ESLint on all files
+npx eslint app/ components/   # Lint specific directory
+npx tsc --noEmit     # Type check without building
 ```
 
-### Linting & Type Checking
-```bash
-npm run lint         # Run ESLint on all files
-npx eslint app/ components/  # Lint specific directory
-npx eslint path/to/file.tsx  # Lint specific file
-npx tsc --noEmit    # Type check without building
-```
-
-### No Test Framework
-This project does **not** have a test framework configured. Do not add test files.
-
----
+No test framework is configured. Do not add test files.
 
 ## Code Style Guidelines
 
-### TypeScript
-- **Always use TypeScript** for new files (.tsx/.ts)
+**TypeScript**
+- Always use TypeScript for new files (.tsx/.ts)
 - Prefer `interface` over `type` for object shapes
-- Use explicit return types for utility functions
-- Never use `any` - use `unknown` if type is truly unknown
+- Explicit return types for utility functions
+- Never use `any` — use `unknown` if truly unknown
 
-### Component Structure
-- All components in `components/sections/` must have `'use client'` directive (they use Framer Motion)
-- Use functional components with `function` keyword (not arrow functions unless needed)
+**Components**
+- Everything in `components/sections/` needs `'use client'` (Framer Motion)
+- Functional components using `function` keyword (not arrow, unless needed)
 - Keep components under 200 lines; extract sub-components if larger
-- All interactive elements should use `motion.` variants from Framer Motion
+- Interactive elements use `motion.` variants
 
-### Imports Order (eslint enforces this)
-1. React imports (`import { useState } from 'react'`)
+**Import order (ESLint-enforced)**
+1. React imports
 2. Next.js imports
 3. External libraries (`framer-motion`, `lucide-react`)
 4. Internal imports (`@/components/`, `@/utils/`)
 5. Relative imports
 
-Example:
-```typescript
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowRight, Mail } from 'lucide-react';
-import { Github, Linkedin } from '@/components/SocialIcons';
-import { fetchGitHubRepos, type GitHubRepo } from '@/utils/api';
-```
+Use the `@/` alias for absolute imports from project root. Custom
+icons live in `components/SocialIcons.tsx` (lucide-react v1.7.0 has no
+GitHub/LinkedIn icons). No barrel exports (`index.ts` files).
 
-- Use `@/` alias for absolute imports from project root
-- Custom icons should be in `components/SocialIcons.tsx` (not lucide-react)
-- Do NOT use barrel exports (index.ts files)
+**Naming**
+- Components: PascalCase (`Navbar.tsx`, `GitHubStats.tsx`)
+- Utilities: camelCase (`api.ts`, `useScrollAnimation.ts`)
+- Constants: SCREAMING_SNAKE_CASE
+- Non-component files: kebab-case
 
-### Naming Conventions
-- **Components**: PascalCase (`Navbar.tsx`, `GitHubStats.tsx`)
-- **Utilities**: camelCase (`api.ts`, `useScrollAnimation.ts`)
-- **Constants**: SCREAMING_SNAKE_CASE for config values
-- **Files**: kebab-case for non-component files
+**Tailwind CSS v4**
+- CSS-based config (no `tailwind.config.js`)
+- Prefer inline Tailwind classes over custom CSS; `@apply` sparingly
+- Custom CSS/animations in `app/globals.css` only
+- Color tokens: `slate-50`–`slate-900`, `indigo-400`, etc.
+- `glass` class for glassmorphism (defined in globals.css)
 
-### Tailwind CSS
-- Use Tailwind v4 syntax with `@apply` sparingly
-- Prefer inline Tailwind classes over custom CSS
-- Custom CSS in `app/globals.css` for themes/animations only
-- Color tokens: `slate-50` through `slate-900`, `indigo-400`, etc.
-- Use `glass` class for glassmorphism (defined in globals.css)
-- Custom animations in globals.css (e.g., `animate-pulse-slow`)
-
-### Framer Motion
-- Use `motion.` prefix for animated elements
-- Always set `viewport={{ once: true }}` for scroll animations (performance)
-- Use `whileHover` and `whileTap` for interactive elements
-- Example pattern:
+**Framer Motion**
+- `motion.` prefix for animated elements
+- Always `viewport={{ once: true }}` on scroll animations
+- `whileHover` / `whileTap` for interactive elements
 ```typescript
 <motion.div
   initial={{ opacity: 0, y: 20 }}
@@ -94,71 +77,196 @@ import { fetchGitHubRepos, type GitHubRepo } from '@/utils/api';
 >
 ```
 
-### Error Handling
-- API calls must have try/catch with user-friendly error messages
-- Show loading states with skeletons, not spinners
+**Error handling**
+- Try/catch with user-friendly messages on all API calls
+- Loading states use skeletons, not spinners
 - Never expose internal errors to users
-
----
 
 ## File Organization
 
 ```
 app/
 ├── globals.css        # Global styles, animations, custom classes
-├── layout.tsx         # Root layout with metadata
-├── page.tsx           # Main page composing all sections
+├── layout.tsx          # Root layout with metadata
+├── page.tsx            # Main page composing all sections
 └── favicon.ico
 
 components/
-├── sections/          # Page sections (Hero, About, Skills, etc.)
-├── PostCard.tsx       # Reusable post card component
-└── SocialIcons.tsx    # Custom SVG icons (GitHub, LinkedIn, Twitter)
+├── sections/           # Page sections (Hero, About, Skills, Projects, etc.)
+├── PostCard.tsx        # Reusable post card component
+└── SocialIcons.tsx     # Custom SVG icons (GitHub, LinkedIn, Twitter)
 
 hooks/
 └── useScrollAnimation.ts
 
 utils/
-├── api.ts             # API utilities for GitHub
-└── types.ts           # TypeScript interfaces
+├── api.ts               # GitHub API utilities
+└── types.ts             # TypeScript interfaces
 
 public/data/
-└── featuredPosts.json  # Featured posts data (LinkedIn)
+└── featuredPosts.json    # Featured posts data (LinkedIn)
 ```
 
----
+Next.js 16, App Router, all animated components are client-side.
+ESLint: `eslint-config-next/core-web-vitals` + `eslint-config-next/typescript`.
 
 ## Common Tasks
 
-### Adding a New Section
+**Adding a new section**
 1. Create `components/sections/NewSection.tsx` with `'use client'`
 2. Add to `app/page.tsx`
 3. Add nav link in `Navbar.tsx`
 
-### Modifying Featured Projects
-- Edit `components/sections/Projects.tsx` - update `featuredProjects` array
+**Modifying Featured Projects**
+- Edit `components/sections/Projects.tsx` — update `featuredProjects` array
 
-### Updating Featured Posts
-- Edit `public/data/featuredPosts.json` - update posts array
+**Updating Featured Posts**
+- Edit `public/data/featuredPosts.json` — update posts array
 
----
+**LinkedIn Feed section (auto-embedded latest posts)**
+- Component: `components/sections/LinkedInFeed.tsx`
+- Data source: `public/data/featuredPosts.json`, kept fresh by the
+  agent via the RSS-bridge workflow in Part 2 of this file
+- Placed in `app/page.tsx` after `Projects`, before `Certifications`
+  — don't reorder other sections when adding this
+- Nav link added in `Navbar.tsx` ("Latest Posts")
 
 ## External APIs
 
-### GitHub API
-- Username: `himanshu231204`
+**GitHub API**
+- Usernames: `himanshu231204` (personal), `OpenAgentHQ` (org)
 - Use `@/utils/api.ts` utilities
 - API calls cached with Next.js `fetch` (revalidate configured)
 - Handle rate limits gracefully
 
-### Featured Posts
-- Use `public/data/featuredPosts.json` (LinkedIn has no public API)
+**Featured Posts / LinkedIn Feed**
+- `public/data/featuredPosts.json` — updated via the RSS-bridge
+  workflow described in Part 2 (no official public API for personal
+  LinkedIn posts)
 
 ---
 
-## Notes
+## Part 2 — Auto-Update Mission
 
-- Lucide-react v1.7.0 does NOT include GitHub/LinkedIn icons - use custom SocialIcons.tsx
-- Tailwind v4 uses CSS-based configuration (no tailwind.config.js)
-- Next.js 16 with App Router, all animated components are client-side ('use client')
-- ESLint: `eslint-config-next/core-web-vitals` + `eslint-config-next/typescript`
+Once per scheduled run: check Himanshu's public activity (GitHub,
+LinkedIn, Twitter/X) and update the repo so the live site reflects his
+latest work — new projects, refreshed stats, new posts, updated
+skills. Commit to a branch and open a PR; never push straight to
+`main` and never auto-merge unless `AUTO_MERGE=true` is set in agent
+config.
+
+### Sources to check, in order
+
+**1. GitHub — required, primary source (this is the main signal)**
+
+GitHub activity is the primary thing this agent should look at for
+"what's new" — more than description/star-count polish. Two accounts
+to check every run:
+- Personal: `himanshu231204`
+- Org: `OpenAgentHQ` (https://github.com/OpenAgentHQ) — repos, merged
+  PRs, and releases under this org count as Himanshu's work too, not
+  just his personal account.
+
+Use `@/utils/api.ts` helpers where they already exist; extend them
+rather than writing ad hoc fetches.
+
+What to actually pull, per run:
+- Recently updated/created repos (both accounts):
+  `users/himanshu231204/repos?sort=updated&per_page=20` and
+  `orgs/OpenAgentHQ/repos?sort=updated&per_page=20`
+- For each candidate repo: `name`, `description`, `topics`,
+  `stargazers_count`, `html_url`, `pushed_at`, primary `language`
+- **Merged PRs** — this is the real "what did he ship" signal:
+  `search/issues?q=author:himanshu231204+is:pr+is:merged+sort:updated`
+  (and the same filtered to `org:OpenAgentHQ` repos). A meaningfully
+  large/notable merged PR (new feature, not a typo fix) is a good
+  candidate to mention in a project's description or a featured post,
+  even if the repo itself was already listed.
+- Recent commit activity / new releases (tags) on repos already
+  featured, to decide if their description/stats need a refresh.
+
+Only surface as a "Featured Project" if public, has a non-empty
+description, isn't a trivial fork. Respect rate limits; cache via
+Next.js `fetch` revalidate as already configured — don't remove or
+shorten existing revalidate windows without reason. GitHub stats
+images (streak-stats, github-readme-activity-graph) are dynamic URLs
+already on the site — never hardcode or "freeze" them.
+
+**2. LinkedIn — track via RSS bridge (no official public API for personal posts)**
+- LinkedIn does not offer a free public API for personal post
+  embedding. The practical route: use an RSS-bridge service
+  (e.g. RSS.app, or similar) pointed at Himanshu's public profile to
+  generate a feed URL for his posts. Store that feed URL in
+  `.env` as `LINKEDIN_RSS_URL` (never commit the URL itself if it
+  contains a private token — check the service's terms).
+- Each run: fetch `LINKEDIN_RSS_URL`, parse entries (title/summary,
+  link, published date), map to the `FeaturedPost` shape (see
+  `utils/types.ts`), and merge into `public/data/featuredPosts.json`
+  — dedupe by post URL, keep newest N (e.g. 6) posts, don't delete
+  older ones from git history, just drop from the displayed list.
+- If `LINKEDIN_RSS_URL` isn't set, or the feed fetch fails, skip
+  silently and log it in `.agent/last-run.md` — never fail the whole
+  run over this.
+- If a proper authenticated LinkedIn connector/MCP tool is available
+  instead, prefer that over the RSS bridge, using only publicly
+  visible fields (headline, current role, post text/links). Never
+  touch private messages or connections.
+
+**3. Twitter/X — best-effort, same rule as LinkedIn**
+- Only use if an authenticated tool/API is actually configured;
+  otherwise skip and log it.
+- If available, pull recent original posts (not retweets/replies)
+  that reference a project, article, or milestone — candidates for
+  `featuredPosts.json` or the Articles section.
+
+### What is allowed to change
+
+- `components/sections/Projects.tsx` → the `featuredProjects` array
+  (add new project, update description/tags/links/star count).
+  A notable merged PR on an already-listed project is valid grounds
+  to refresh that project's description (e.g. "added X" once merged),
+  not just to add brand-new repos.
+- `public/data/featuredPosts.json` → featured posts list
+- Skills lists in the relevant section component — add a technology
+  only after it appears in ≥2 real repos/READMEs, not on hearsay
+- Copy-level stat updates (e.g. PyPI download count) only when
+  verified against the live source
+
+### What must NEVER change without explicit human approval
+
+- Name, headline, bio wording/voice, contact info, resume PDF
+- Page structure, section order, design system, Tailwind theme
+- `layout.tsx` metadata, `og:image`, canonical URL
+- `public/resume.pdf`
+- Anything in `app/globals.css` (colors, fonts, animations)
+- The file organization / import order / naming conventions in Part 1
+
+If a change feels structural rather than data-level, stop and open an
+issue titled `[agent] needs human review: <short reason>` instead of
+editing directly.
+
+### Update workflow
+
+1. `git checkout -b agent/update-<YYYY-MM-DD>`
+2. Gather data (GitHub required, LinkedIn/Twitter best-effort)
+3. Diff against current data (`Projects.tsx` array, `featuredPosts.json`)
+4. Write changes following Part 1's code style exactly — don't
+   reformat unrelated lines, keep diffs reviewable
+5. `npm run lint` and `npx tsc --noEmit` before committing; run
+   `npm run build` too. If any fail, revert and log why
+6. Commit: `chore(agent): sync projects + posts from GitHub (YYYY-MM-DD)`
+7. Open a PR (don't merge automatically unless configured)
+8. Append to `.agent/last-run.md`: timestamp, sources checked/skipped
+   (with reason), files changed, anything flagged for manual review
+
+## Hard rules
+
+- Never fabricate a project, stat, certificate, or quote — skip and
+  log ambiguous data instead of guessing
+- Never scrape/store LinkedIn or Twitter data beyond what's publicly
+  displayed and needed for this site
+- Never commit secrets/API keys; `.env` stays out of git
+- Never force-push or rewrite git history
+- One agent run = one branch = one PR; don't stack runs on one branch
+- When unsure whether something counts as a real update, do nothing
+  rather than guess
