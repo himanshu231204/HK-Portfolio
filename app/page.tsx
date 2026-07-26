@@ -3,6 +3,7 @@ import Hero from '@/components/sections/Hero';
 import About from '@/components/sections/About';
 import Skills from '@/components/sections/Skills';
 import Projects from '@/components/sections/Projects';
+import Contributions from '@/components/sections/Contributions';
 import GitHubStats from '@/components/sections/GitHubStats';
 import Education from '@/components/sections/Education';
 import Certifications from '@/components/sections/Certifications';
@@ -20,6 +21,7 @@ export default function Home() {
       <About />
       <Skills />
       <Projects />
+      <Contributions />
       <GitHubStats />
       <Education />
       <Certifications />

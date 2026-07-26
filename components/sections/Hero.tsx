@@ -45,7 +45,16 @@ export default function Hero() {
               transition={{ delay: 0.4 }}
               className="text-xl md:text-2xl text-slate-300 mb-2"
             >
-              AI/ML & GenAI Engineer | Open Source Builder
+              AI Engineer · Founder of{' '}
+              <a
+                href="https://github.com/OpenAgentHQ"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-indigo-400 hover:text-indigo-300 transition-colors"
+              >
+                OpenAgentHQ
+              </a>{' '}
+              · Open Source Contributor
             </motion.p>
             
             <motion.p
@@ -54,7 +63,7 @@ export default function Hero() {
               transition={{ delay: 0.5 }}
               className="text-lg text-slate-400 mb-8"
             >
-              Building Tools That Solve Real Problems
+              Building agentic systems, LLM infrastructure &amp; developer tools
             </motion.p>
 
             <motion.div

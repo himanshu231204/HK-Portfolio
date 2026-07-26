@@ -1,10 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Sparkles, Code, GraduationCap } from 'lucide-react';
+import { Sparkles, Code, GraduationCap, Building2 } from 'lucide-react';
 
 export default function About() {
   const highlights = [
+    {
+      icon: Building2,
+      title: "Founder of OpenAgentHQ",
+      description: "Building open source tools around agentic systems, RAG pipelines, and LLM infrastructure — from CLI tools with real installs to evaluation frameworks."
+    },
     {
       icon: Sparkles,
       title: "Learning by Building",
@@ -36,13 +41,11 @@ export default function About() {
             About <span className="gradient-text">Me</span>
           </h2>
           <p className="text-slate-400 max-w-2xl mx-auto">
-            Computer Science Engineering student focused on building real-world AI systems in Machine Learning and Generative AI.
+            CS engineering student and AI engineer. Founder of OpenAgentHQ. I build and ship open source tools around agentic systems, RAG pipelines, and LLM infrastructure.
           </p>
         </motion.div>
 
-        
-
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {highlights.map((item, index) => (
             <motion.div
               key={item.title}
