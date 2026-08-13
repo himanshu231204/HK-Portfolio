@@ -81,10 +81,10 @@ export default function ArticleClient({ slug }: { slug: string }) {
 
     // Process inline formatting (before paragraphs)
     html = html
-      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-white">$1</strong>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-[color:var(--text)]">$1</strong>')
       .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
-      .replace(/`([^`]+)`/g, '<code class="bg-slate-800 px-2 py-1 rounded text-sm font-mono text-cyan-300">$1</code>')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors" target="_blank" rel="noopener">$1</a>');
+      .replace(/`([^`]+)`/g, '<code class="rounded bg-[color:var(--bg-subtle)] border border-[color:var(--border)] px-1.5 py-0.5 text-[0.85em] font-mono">$1</code>')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-[color:var(--accent)] underline underline-offset-2" target="_blank" rel="noopener noreferrer">$1</a>');
 
     // Process blockquotes
     html = html.replace(/^> (.*$)/gm, '__BLOCKQUOTE__$1__/BLOCKQUOTE__');
@@ -98,7 +98,7 @@ export default function ArticleClient({ slug }: { slug: string }) {
         return '<ul class="ml-6 mb-4 space-y-2">' + 
           items.map(item => {
             const text = item.replace(/^[-*]\s+/, '');
-            return `<li class="flex items-start"><span class="text-cyan-400 mr-3 mt-1">•</span><span>${text}</span></li>`;
+            return `<li class="flex items-start"><span class="mr-3 mt-1 text-[color:var(--accent)]">•</span><span>${text}</span></li>`;
           }).join('') + 
           '</ul>';
       }
@@ -110,14 +110,14 @@ export default function ArticleClient({ slug }: { slug: string }) {
           items.map(item => {
             const num = item.match(/^(\d+)\./)?.[1];
             const text = item.replace(/^\d+\.\s+/, '');
-            return `<li class="flex items-start"><span class="text-cyan-400 mr-3 font-semibold">${num}.</span><span>${text}</span></li>`;
+            return `<li class="flex items-start"><span class="mr-3 font-mono text-[color:var(--text-faint)]">${num}.</span><span>${text}</span></li>`;
           }).join('') + 
           '</ol>';
       }
       
       // Check if it's a blockquote
       if (block.includes('__BLOCKQUOTE__')) {
-        return block.replace(/__BLOCKQUOTE__(.*?)__\/BLOCKQUOTE__/g, '<blockquote class="border-l-4 border-cyan-400 pl-4 py-2 my-4 italic text-slate-300 bg-white/5 p-4 rounded-r-lg">$1</blockquote>');
+        return block.replace(/__BLOCKQUOTE__(.*?)__\/BLOCKQUOTE__/g, '<blockquote class="my-5 rounded-r-lg border-l-2 border-[color:var(--accent)] bg-[color:var(--bg-subtle)] px-4 py-3 text-[color:var(--text-muted)]">$1</blockquote>');
       }
       
       // Regular paragraph
@@ -128,20 +128,20 @@ export default function ArticleClient({ slug }: { slug: string }) {
     Object.entries(codePlaceholders).forEach(([placeholder, code]) => {
       processedBlocks = processedBlocks.replace(
         placeholder,
-        `<pre class="bg-slate-900 border border-slate-800 p-4 rounded-lg overflow-x-auto mb-6 shadow-lg"><code class="text-sm font-mono text-slate-300">${code}</code></pre>`
+        `<pre class="mb-6 overflow-x-auto rounded-lg border border-[color:var(--border)] bg-[color:var(--bg-subtle)] p-4"><code class="font-mono text-sm">${code}</code></pre>`
       );
     });
 
     // Convert heading placeholders to actual HTML
     const finalHtml = processedBlocks
       .replace(/__H1_(heading-\d+)__(.*?)__\/H1__/g, (_, id, text) => 
-        `<h1 id="${id}" class="text-4xl font-bold mb-6 mt-12 text-white scroll-mt-24">${text}</h1>`
+        `<h1 id="${id}" class="heading mt-12 mb-6 scroll-mt-24 text-3xl font-semibold">${text}</h1>`
       )
       .replace(/__H2_(heading-\d+)__(.*?)__\/H2__/g, (_, id, text) => 
-        `<h2 id="${id}" class="text-2xl font-bold mb-4 mt-8 text-white scroll-mt-24">${text}</h2>`
+        `<h2 id="${id}" class="heading mt-10 mb-4 scroll-mt-24 text-2xl font-semibold">${text}</h2>`
       )
       .replace(/__H3_(heading-\d+)__(.*?)__\/H3__/g, (_, id, text) => 
-        `<h3 id="${id}" class="text-xl font-semibold mb-3 mt-6 text-white scroll-mt-24">${text}</h3>`
+        `<h3 id="${id}" class="heading mt-8 mb-3 scroll-mt-24 text-lg font-semibold">${text}</h3>`
       );
 
     return {
@@ -199,15 +199,15 @@ export default function ArticleClient({ slug }: { slug: string }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen pt-24 pb-12 bg-gradient-to-br from-slate-950 to-slate-900">
-        <div className="max-w-4xl mx-auto px-6">
+      <div className="min-h-screen pb-16 pt-32">
+        <div className="mx-auto max-w-3xl px-6">
           <div className="animate-pulse">
-            <div className="h-8 bg-white/10 rounded w-3/4 mb-4" />
-            <div className="h-4 bg-white/10 rounded w-1/2 mb-8" />
+            <div className="mb-4 h-8 w-3/4 rounded bg-[color:var(--surface-hover)]" />
+            <div className="mb-8 h-4 w-1/2 rounded bg-[color:var(--surface-hover)]" />
             <div className="space-y-3">
-              <div className="h-4 bg-white/10 rounded w-full" />
-              <div className="h-4 bg-white/10 rounded w-full" />
-              <div className="h-4 bg-white/10 rounded w-2/3" />
+              <div className="h-4 w-full rounded bg-[color:var(--surface-hover)]" />
+              <div className="h-4 w-full rounded bg-[color:var(--surface-hover)]" />
+              <div className="h-4 w-2/3 rounded bg-[color:var(--surface-hover)]" />
             </div>
           </div>
         </div>
@@ -217,11 +217,11 @@ export default function ArticleClient({ slug }: { slug: string }) {
 
   if (error || !article) {
     return (
-      <div className="min-h-screen pt-24 pb-12 bg-gradient-to-br from-slate-950 to-slate-900">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h1 className="text-3xl font-bold mb-4 text-white">Article Not Found</h1>
-          <p className="text-slate-400 mb-6">The article you&apos;re looking for doesn&apos;t exist.</p>
-          <Link href="/" className="text-cyan-400 hover:text-cyan-300 inline-flex items-center gap-2 transition-colors">
+      <div className="min-h-screen pb-16 pt-32">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <h1 className="heading mb-4 text-3xl font-semibold">Article Not Found</h1>
+          <p className="prose-muted mb-6">The article you&apos;re looking for doesn&apos;t exist.</p>
+          <Link href="/" className="inline-flex items-center gap-2 text-[color:var(--accent)] hover:underline">
             <ArrowLeft size={16} />
             Back to Home
           </Link>
@@ -240,21 +240,21 @@ export default function ArticleClient({ slug }: { slug: string }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen">
       <motion.article
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="relative pt-24 pb-12"
+        className="relative pb-16 pt-32"
       >
-        <div className="max-w-6xl mx-auto px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl px-6">
           <div className="grid lg:grid-cols-4 gap-12">
             {/* Main Content */}
             <div className="lg:col-span-3">
               {/* Back Link */}
               <Link 
                 href="/#articles"
-                className="inline-flex items-center gap-2 text-slate-400 hover:text-white mb-8 transition-colors group"
+                className="group mb-8 inline-flex items-center gap-2 text-sm text-ink-muted transition-colors hover:text-ink"
               >
                 <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
                 Back to Articles
@@ -265,27 +265,27 @@ export default function ArticleClient({ slug }: { slug: string }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="mb-8 pb-8 border-b border-white/10"
+                className="mb-10 border-b border-[color:var(--border)] pb-8"
               >
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight text-white">
+                <h1 className="display text-4xl font-semibold md:text-5xl">
                   {article.title}
                 </h1>
                 
-                <p className="text-lg text-slate-400 mb-6 leading-relaxed">
+                <p className="prose-muted mt-5 text-lg">
                   {article.excerpt}
                 </p>
 
-                <div className="flex flex-wrap items-center gap-6 text-sm text-slate-400 mb-6">
-                  <span className="flex items-center gap-2 hover:text-white transition-colors">
-                    <Calendar size={16} className="text-cyan-400" />
+                <div className="mono-meta mt-6 flex flex-wrap items-center gap-x-6 gap-y-2">
+                  <span className="flex items-center gap-2">
+                    <Calendar size={14} />
                     {formatDate(article.date)}
                   </span>
-                  <span className="flex items-center gap-2 hover:text-white transition-colors">
-                    <Clock size={16} className="text-cyan-400" />
+                  <span className="flex items-center gap-2">
+                    <Clock size={14} />
                     {readingTime} min read
                   </span>
-                  <span className="flex items-center gap-2 hover:text-white transition-colors">
-                    <BookOpen size={16} className="text-cyan-400" />
+                  <span className="flex items-center gap-2">
+                    <BookOpen size={14} />
                     {article.content.split(/\s+/).length.toLocaleString()} words
                   </span>
                 </div>
@@ -310,7 +310,7 @@ export default function ArticleClient({ slug }: { slug: string }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="prose prose-invert max-w-none text-slate-300 prose-headings:text-white prose-a:text-cyan-400"
+                className="max-w-none text-[0.975rem] leading-[1.75] text-ink-muted"
               >
                 <div 
                   className="space-y-4 text-base leading-relaxed"
@@ -323,12 +323,12 @@ export default function ArticleClient({ slug }: { slug: string }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="mt-12 pt-8 border-t border-white/10"
+                className="mt-14 border-t border-[color:var(--border)] pt-8"
               >
                 <div className="flex items-center justify-between">
                   <Link 
                     href="/#articles"
-                    className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors group"
+                    className="group inline-flex items-center gap-2 text-sm text-[color:var(--accent)]"
                   >
                     <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
                     More Articles
@@ -344,7 +344,7 @@ export default function ArticleClient({ slug }: { slug: string }) {
                         navigator.clipboard.writeText(window.location.href);
                       });
                     }}
-                    className="inline-flex items-center gap-2 text-slate-400 hover:text-cyan-400 transition-colors group"
+                    className="inline-flex items-center gap-2 text-sm text-ink-muted transition-colors hover:text-ink"
                   >
                     <Share2 size={16} />
                     Share
@@ -359,11 +359,11 @@ export default function ArticleClient({ slug }: { slug: string }) {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="hidden lg:block h-fit sticky top-24"
+                className="sticky top-28 hidden h-fit lg:block"
               >
-                <div className="bg-white/5 border border-white/10 rounded-lg p-6 backdrop-blur-sm">
-                  <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-                    <BookOpen size={16} className="text-cyan-400" />
+                <div className="rounded-xl border border-[color:var(--border)] p-5">
+                  <h3 className="mono-label">
+                    <BookOpen size={14} />
                     On this page
                   </h3>
                   <nav className="space-y-2">
@@ -377,8 +377,8 @@ export default function ArticleClient({ slug }: { slug: string }) {
                         }}
                         className={`block text-sm transition-all duration-300 rounded px-2 py-1.5 ${
                           activeHeading === heading.id
-                            ? 'text-cyan-400 bg-cyan-400/10 font-medium'
-                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                            ? 'bg-[color:var(--accent-soft)] text-[color:var(--accent)]'
+                            : 'text-ink-muted hover:text-ink'
                         } ${heading.level === 3 ? 'ml-4' : ''}`}
                       >
                         {heading.text}

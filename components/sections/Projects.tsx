@@ -1,28 +1,22 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { Star, GitFork, ExternalLink, Sparkles, Terminal, Workflow, X, Toolbox } from 'lucide-react';
-import { Github } from '@/components/SocialIcons';
+import { ArrowUpRight, GitFork, Star, X } from 'lucide-react';
+import Section from '@/components/ui/Section';
+import Reveal from '@/components/ui/Reveal';
+import GridFillers from '@/components/ui/GridFillers';
 import { fetchGitHubRepos, formatDate, type GitHubRepo } from '@/utils/api';
 import { type FeaturedProject } from '@/utils/types';
 import featuredProjectsData from '@/public/data/featuredProjects.json';
 
-const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
-  Terminal,
-  Sparkles,
-  Workflow,
-  Toolbox,
-};
-
 const featuredProjects: FeaturedProject[] = featuredProjectsData.projects;
 
-// Extract all unique tech tags from projects
-const allTechTags = Array.from(
-  new Set([
-    ...featuredProjects.flatMap(p => p.tags),
-  ])
-).sort();
+/** "https://github.com/owner/repo" -> "owner/repo" */
+function repoPath(url: string) {
+  return url.replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '');
+}
+
+const allTechTags = Array.from(new Set(featuredProjects.flatMap((p) => p.tags))).sort();
 
 export default function Projects() {
   const [filter, setFilter] = useState<'featured' | 'all'>('featured');
@@ -40,7 +34,7 @@ export default function Projects() {
       const data = await fetchGitHubRepos('himanshu231204');
       setRepos(data);
     } catch {
-      setError('Failed to load repositories');
+      setError('Could not reach the GitHub API. Try again in a moment.');
     } finally {
       setLoading(false);
     }
@@ -48,368 +42,278 @@ export default function Projects() {
 
   const handleFilterChange = (newFilter: 'featured' | 'all') => {
     setFilter(newFilter);
-    if (newFilter === 'all') {
-      loadRepos();
-    }
+    if (newFilter === 'all') loadRepos();
   };
 
-  // Get all tech tags from GitHub repos
   const repoTechTags = useMemo(() => {
     const tags = new Set<string>();
-    repos.forEach(repo => {
+    repos.forEach((repo) => {
       if (repo.language) tags.add(repo.language);
-      if (repo.topics) repo.topics.forEach(t => tags.add(t));
+      repo.topics?.forEach((t) => tags.add(t));
     });
     return Array.from(tags).sort();
   }, [repos]);
 
-  // Combine all available tech tags
-  const availableTechTags = useMemo(() => {
-    const tags = new Set([...allTechTags, ...repoTechTags]);
-    return Array.from(tags).sort();
-  }, [repoTechTags]);
+  const availableTechTags = useMemo(
+    () => Array.from(new Set([...allTechTags, ...repoTechTags])).sort(),
+    [repoTechTags]
+  );
 
-  // Filter repos based on selected technologies (OR logic)
   const filteredRepos = useMemo(() => {
-    let result = filter === 'featured' 
-      ? repos.filter(repo => repo.stargazers_count > 0 || repo.topics?.includes('featured'))
-      : repos;
+    let result =
+      filter === 'featured'
+        ? repos.filter((repo) => repo.stargazers_count > 0 || repo.topics?.includes('featured'))
+        : repos;
 
     if (selectedTechs.length > 0) {
-      result = result.filter(repo => {
-        const repoTechs: string[] = [];
-        if (repo.language) repoTechs.push(repo.language);
-        if (repo.topics) repoTechs.push(...repo.topics);
-        
-        // OR logic: show if ANY selected tech matches
-        return selectedTechs.some(tech => 
-          repoTechs.map(t => t.toLowerCase()).includes(tech.toLowerCase())
-        );
+      const wanted = selectedTechs.map((t) => t.toLowerCase());
+      result = result.filter((repo) => {
+        const repoTechs = [repo.language, ...(repo.topics ?? [])]
+          .filter((t): t is string => Boolean(t))
+          .map((t) => t.toLowerCase());
+        return wanted.some((tech) => repoTechs.includes(tech));
       });
     }
 
     return result;
   }, [repos, filter, selectedTechs]);
 
-  const toggleTechFilter = (tech: string) => {
-    setSelectedTechs(prev => 
-      prev.includes(tech) 
-        ? prev.filter(t => t !== tech)
-        : [...prev, tech]
+  const toggleTechFilter = (tech: string) =>
+    setSelectedTechs((prev) =>
+      prev.includes(tech) ? prev.filter((t) => t !== tech) : [...prev, tech]
     );
-  };
-
-  const clearFilters = () => {
-    setSelectedTechs([]);
-  };
 
   return (
-    <section id="projects" className="py-24 relative">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Section Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="text-center mb-16"
+    <Section
+      id="projects"
+      index="01"
+      title="Selected work"
+      description="Systems I built end to end — retrieval pipelines, evaluation tooling and CLIs that people install and use."
+      action={
+        <a
+          href="https://github.com/himanshu231204?tab=repositories"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mono-meta link-underline inline-flex items-center gap-1.5 text-ink-muted hover:text-ink"
         >
-          <motion.h2 
-            className="text-4xl md:text-5xl font-bold mb-4"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+          All repositories <ArrowUpRight size={13} />
+        </a>
+      }
+    >
+      {/* ------------------------------------------------------------------ */}
+      {/* Featured — numbered rows, so the eye reads them in order instead of */}
+      {/* bouncing across seven identically-weighted gradient tiles.          */}
+      <ol className="overflow-hidden rounded-xl border border-[var(--border)]">
+        {featuredProjects.map((project, index) => (
+          <Reveal
+            key={project.title}
+            as="li"
+            delay={index * 0.04}
+            className="border-b border-[var(--border)] last:border-b-0"
           >
-            <motion.span
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5 }}
-              className="inline-block"
+            <a
+              href={project.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group block px-5 py-6 transition-colors hover:bg-[var(--surface)] md:px-7"
             >
-              Featured{' '}
-            </motion.span>
-            <motion.span
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.15 }}
-              className="inline-block bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent hover:text-cyan-400 transition-all hover:drop-shadow-[0_0_10px_rgba(0,217,255,0.5)]"
-            >
-              Projects
-            </motion.span>
-          </motion.h2>
-          
-          <motion.p 
-            className="text-slate-400 max-w-2xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            Real-world AI systems and tools I&apos;ve built to solve actual problems.
-          </motion.p>
-        </motion.div>
-
-        {/* Featured Projects */}
-        <div className="grid md:grid-cols-3 gap-6 mb-16">
-          {featuredProjects.map((project, index) => (
-            <motion.div
-              key={project.title}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1, type: 'spring', stiffness: 200, damping: 15 }}
-              whileHover={{ y: -6, scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-              className="glass rounded-2xl overflow-hidden group cursor-pointer border border-white/5 hover:border-purple-500/30 transition-all duration-300 hover:shadow-[0_0_25px_rgba(139,92,246,0.25)]"
-              onClick={() => window.open(project.github, '_blank')}
-            >
-              <div className={`h-32 bg-gradient-to-br ${project.gradient} flex items-center justify-center relative overflow-hidden`}>
-                {(() => {
-                  const IconComponent = iconMap[project.icon];
-                  return IconComponent ? (
-                    <IconComponent size={48} className="text-white/80 group-hover:scale-110 transition-transform duration-300" />
-                  ) : (
-                    <Sparkles size={48} className="text-white/80 group-hover:scale-110 transition-transform duration-300" />
-                  );
-                })()}
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-              
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-xl font-semibold group-hover:text-purple-400 transition-colors">
-                    {project.title}
-                  </h3>
-                  <motion.div
-                    whileHover={{ rotate: 10, scale: 1.1 }}
-                    transition={{ type: 'spring', stiffness: 400 }}
-                  >
-                    <Github size={18} className="text-slate-500" />
-                  </motion.div>
+              <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,320px)] md:items-start md:gap-10">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <span className="mono-meta">{String(index + 1).padStart(2, '0')}</span>
+                    <h3 className="font-medium transition-colors group-hover:text-[var(--accent)]">
+                      {project.title}
+                    </h3>
+                    <ArrowUpRight
+                      size={14}
+                      className="text-ink-faint transition-colors group-hover:text-[var(--accent)]"
+                    />
+                  </div>
+                  <p className="prose-muted mt-2.5 max-w-xl text-sm">{project.description}</p>
+                  <p className="mono-meta mt-3">{repoPath(project.github)}</p>
                 </div>
-                
-                <p className="text-slate-400 text-sm mb-4 group-hover:text-slate-300 transition-colors">
-                  {project.description}
-                </p>
-                
-                <div className="flex flex-wrap gap-2">
+
+                <ul className="flex flex-wrap gap-2 md:justify-end">
                   {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-2 py-1 bg-white/5 rounded-md text-xs text-slate-400 group-hover:bg-white/10 transition-colors"
-                    >
+                    <li key={tag} className="tag">
                       {tag}
-                    </span>
+                    </li>
                   ))}
-                </div>
+                </ul>
               </div>
-            </motion.div>
-          ))}
-        </div>
+            </a>
+          </Reveal>
+        ))}
+      </ol>
 
-        {/* GitHub Repositories with Tech Filtering */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="glass rounded-2xl p-8"
-        >
-          <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+      {/* ------------------------------------------------------------------ */}
+      {/* Live repository browser                                             */}
+      <Reveal>
+        <div className="mt-16">
+          <div className="flex flex-col gap-4 border-b border-[var(--border)] pb-5 md:flex-row md:items-end md:justify-between">
             <div>
-              <h3 className="text-2xl font-bold mb-2">GitHub Repositories</h3>
-              <p className="text-slate-400">Explore all my open source projects</p>
+              <h3 className="text-lg font-medium">Repositories</h3>
+              <p className="prose-muted mt-1.5 text-sm">
+                Pulled live from the GitHub API.
+              </p>
             </div>
-            
-            <div className="flex flex-wrap gap-2">
-              {/* Featured/All Toggle */}
-              <div className="flex gap-1 bg-white/5 rounded-lg p-1">
-                <button
-                  onClick={() => handleFilterChange('featured')}
-                  className={`px-3 py-1.5 rounded-md text-sm transition-all ${
-                    filter === 'featured'
-                      ? 'bg-indigo-600 text-white'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  Featured
-                </button>
-                <button
-                  onClick={() => handleFilterChange('all')}
-                  className={`px-3 py-1.5 rounded-md text-sm transition-all ${
-                    filter === 'all'
-                      ? 'bg-indigo-600 text-white'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  All
-                </button>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex rounded-lg border border-[var(--border)] p-0.5">
+                {(['featured', 'all'] as const).map((option) => (
+                  <button
+                    key={option}
+                    onClick={() => handleFilterChange(option)}
+                    aria-pressed={filter === option}
+                    className={`rounded-md px-3 py-1.5 text-xs capitalize transition-colors ${
+                      filter === option
+                        ? 'bg-[var(--surface)] text-ink'
+                        : 'text-ink-faint hover:text-ink'
+                    }`}
+                  >
+                    {option}
+                  </button>
+                ))}
               </div>
 
-              {/* Tech Filter Toggle */}
               <button
-                onClick={() => setShowTagFilter(!showTagFilter)}
-                className={`px-3 py-1.5 rounded-lg text-sm transition-all flex items-center gap-2 ${
+                onClick={() => setShowTagFilter((open) => !open)}
+                aria-expanded={showTagFilter}
+                className={`inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs transition-colors ${
                   showTagFilter || selectedTechs.length > 0
-                    ? 'bg-cyan-600 text-white'
-                    : 'bg-white/5 text-slate-400 hover:text-white'
+                    ? 'border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent)]'
+                    : 'border-[var(--border)] text-ink-faint hover:text-ink'
                 }`}
               >
-                <span>Tech</span>
+                Filter by tech
                 {selectedTechs.length > 0 && (
-                  <span className="bg-white/20 px-1.5 py-0.5 rounded text-xs">
-                    {selectedTechs.length}
-                  </span>
+                  <span className="font-mono">{selectedTechs.length}</span>
                 )}
               </button>
             </div>
           </div>
 
-          {/* Tech Filter Tags */}
           {(showTagFilter || selectedTechs.length > 0) && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="mb-6 pb-6 border-b border-white/10"
-            >
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm text-slate-500 mr-2">Filter by tech:</span>
-                {availableTechTags.map((tech) => (
-                  <button
-                    key={tech}
-                    onClick={() => toggleTechFilter(tech)}
-                    className={`px-3 py-1 rounded-full text-xs transition-all ${
-                      selectedTechs.includes(tech)
-                        ? 'bg-cyan-600 text-white'
-                        : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'
-                    }`}
-                  >
-                    {tech}
-                  </button>
-                ))}
+            <div className="border-b border-[var(--border)] py-5">
+              <div className="flex flex-wrap items-center gap-1.5">
+                {availableTechTags.map((tech) => {
+                  const isSelected = selectedTechs.includes(tech);
+                  return (
+                    <button
+                      key={tech}
+                      onClick={() => toggleTechFilter(tech)}
+                      aria-pressed={isSelected}
+                      className={isSelected ? 'tag tag-accent' : 'tag hover:text-ink'}
+                    >
+                      {tech}
+                    </button>
+                  );
+                })}
                 {selectedTechs.length > 0 && (
                   <button
-                    onClick={clearFilters}
-                    className="flex items-center gap-1 px-2 py-1 text-xs text-slate-500 hover:text-red-400 transition-colors"
+                    onClick={() => setSelectedTechs([])}
+                    className="mono-meta inline-flex items-center gap-1 px-2 py-1 hover:text-ink"
                   >
-                    <X size={12} />
-                    Clear
+                    <X size={11} /> Clear
                   </button>
                 )}
               </div>
               {selectedTechs.length > 0 && (
-                <p className="text-xs text-slate-500 mt-2">
-                  Showing {filteredRepos.length} repos with: {selectedTechs.join(' OR ')}
+                <p className="mono-meta mt-3">
+                  {filteredRepos.length} matching {selectedTechs.join(' · ')}
                 </p>
               )}
-            </motion.div>
+            </div>
           )}
 
           {loading && (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="glass rounded-xl p-4 animate-pulse">
-                  <div className="h-5 bg-white/10 rounded w-3/4 mb-3" />
-                  <div className="h-4 bg-white/10 rounded w-full mb-2" />
-                  <div className="h-3 bg-white/10 rounded w-1/2" />
+            <div className="grid gap-px bg-[var(--border)] md:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="animate-pulse bg-[var(--bg)] p-5">
+                  <div className="h-4 w-2/3 rounded bg-[var(--surface-hover)]" />
+                  <div className="mt-3 h-3 w-full rounded bg-[var(--surface-hover)]" />
+                  <div className="mt-2 h-3 w-1/2 rounded bg-[var(--surface-hover)]" />
                 </div>
               ))}
             </div>
           )}
 
           {error && (
-            <div className="text-center py-8 text-red-400">
-              {error}
-            </div>
+            <p className="py-10 text-center text-sm text-ink-muted">{error}</p>
           )}
 
-          {!loading && !error && (
-            <>
-              {filteredRepos.length === 0 && selectedTechs.length > 0 ? (
-                <div className="text-center py-12">
-                  <p className="text-slate-400 mb-4">No repositories match the selected filters</p>
+          {!loading && !error && filteredRepos.length === 0 && (
+            <div className="py-12 text-center">
+              {selectedTechs.length > 0 ? (
+                <>
+                  <p className="text-sm text-ink-muted">No repositories match those filters.</p>
                   <button
-                    onClick={clearFilters}
-                    className="text-cyan-400 hover:text-cyan-300 transition-colors"
+                    onClick={() => setSelectedTechs([])}
+                    className="mono-meta link-underline mt-3 text-[var(--accent)]"
                   >
                     Clear filters
                   </button>
-                </div>
+                </>
               ) : (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filteredRepos.slice(0, 12).map((repo, index) => (
-                    <motion.a
-                      key={repo.id}
-                      href={repo.html_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      initial={{ opacity: 0, y: 30 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: index * 0.05, type: 'spring', stiffness: 200, damping: 15 }}
-                      whileHover={{ y: -4, scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="glass rounded-xl p-4 hover:bg-white/10 transition-all duration-300 group border border-white/5 hover:border-cyan-500/30 hover:shadow-[0_0_20px_rgba(0,217,255,0.15)]"
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-semibold text-sm group-hover:text-cyan-400 transition-colors truncate">
-                          {repo.name}
-                        </h4>
-                        <motion.div
-                          whileHover={{ rotate: 10, scale: 1.1 }}
-                          transition={{ type: 'spring', stiffness: 400 }}
-                        >
-                          <ExternalLink size={14} className="text-slate-500 group-hover:text-cyan-400 transition-colors" />
-                        </motion.div>
-                      </div>
-                      
-                      <p className="text-slate-400 text-xs mb-3 line-clamp-2 group-hover:text-slate-300 transition-colors">
-                        {repo.description || 'No description'}
-                      </p>
-                      
-                      <div className="flex flex-wrap gap-1.5 mb-2">
-                        {repo.language && (
-                          <span className="px-2 py-0.5 bg-purple-500/20 text-purple-400 rounded text-xs">
-                            {repo.language}
-                          </span>
-                        )}
-                        {repo.topics?.slice(0, 2).map(topic => (
-                          <span key={topic} className="px-2 py-0.5 bg-cyan-500/20 text-cyan-400 rounded text-xs">
-                            {topic}
-                          </span>
-                        ))}
-                      </div>
-                      
-                      <div className="flex items-center gap-4 text-xs text-slate-500 group-hover:text-slate-400 transition-colors">
-                        <motion.span 
-                          className="flex items-center gap-1"
-                          whileHover={{ scale: 1.1 }}
-                        >
-                          <Star size={12} className="text-yellow-500" />
-                          {repo.stargazers_count}
-                        </motion.span>
-                        <motion.span 
-                          className="flex items-center gap-1"
-                          whileHover={{ scale: 1.1 }}
-                        >
-                          <GitFork size={12} />
-                          {repo.forks_count}
-                        </motion.span>
-                        <span className="ml-auto text-slate-500">{formatDate(repo.updated_at)}</span>
-                      </div>
-                    </motion.a>
-                  ))}
-                </div>
+                // fetchGitHubRepos swallows failures and returns [], so an empty
+                // list here means either a rate limit or no matching repos.
+                <p className="text-sm text-ink-muted">
+                  Repositories are not loading right now —{' '}
+                  <a
+                    href="https://github.com/himanshu231204?tab=repositories"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="link-underline text-[var(--accent)]"
+                  >
+                    browse them on GitHub
+                  </a>
+                  .
+                </p>
               )}
-            </>
+            </div>
           )}
-        </motion.div>
-      </div>
-    </section>
+
+          {!loading && !error && filteredRepos.length > 0 && (
+            <div className="grid gap-px bg-[var(--border)] md:grid-cols-2 lg:grid-cols-3">
+              {filteredRepos.slice(0, 12).map((repo) => (
+                <a
+                  key={repo.id}
+                  href={repo.html_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex flex-col bg-[var(--bg)] p-5 transition-colors hover:bg-[var(--surface)]"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <h4 className="truncate font-mono text-sm transition-colors group-hover:text-[var(--accent)]">
+                      {repo.name}
+                    </h4>
+                    <ArrowUpRight
+                      size={14}
+                      className="shrink-0 text-ink-faint transition-colors group-hover:text-[var(--accent)]"
+                    />
+                  </div>
+
+                  <p className="prose-muted mt-2 line-clamp-2 flex-1 text-xs">
+                    {repo.description || 'No description'}
+                  </p>
+
+                  <div className="mono-meta mt-4 flex items-center gap-3">
+                    {repo.language && <span className="text-ink-muted">{repo.language}</span>}
+                    <span className="inline-flex items-center gap-1">
+                      <Star size={11} /> {repo.stargazers_count}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <GitFork size={11} /> {repo.forks_count}
+                    </span>
+                    <span className="ml-auto">{formatDate(repo.updated_at)}</span>
+                  </div>
+                </a>
+              ))}
+              <GridFillers count={Math.min(filteredRepos.length, 12)} />
+            </div>
+          )}
+        </div>
+      </Reveal>
+    </Section>
   );
 }

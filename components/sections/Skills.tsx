@@ -1,117 +1,103 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { 
-  Brain, 
-  Server, 
-  Wrench, 
-  Code2, 
-  Database, 
-  Terminal, 
-  GitBranch,
-  FlaskConical,
-  Boxes,
-  Workflow,
-  Container
-} from 'lucide-react';
+import Section from '@/components/ui/Section';
+import Reveal from '@/components/ui/Reveal';
 
-const skillCategories = [
+/**
+ * Presented as a technical spec sheet rather than icon pills. `primary` marks
+ * the tools reached for first — a flat wall of equal-weight badges tells a
+ * reader nothing about depth.
+ */
+const stack = [
   {
-    title: "AI/ML",
-    icon: Brain,
-    skills: [
-      { name: "Python", icon: Code2 },
-      { name: "LangChain", icon: Boxes },
-      { name: "LangGraph", icon: Boxes },
-      { name: "FAISS", icon: Database },
-      { name: "Sentence Transformers", icon: Brain },
-      { name: "Scikit-learn", icon: Brain },
-      { name: "Generative AI", icon: FlaskConical },
-      { name: "LLM Applications", icon: Workflow },
-    ]
+    group: 'Languages',
+    items: [
+      { name: 'Python', primary: true },
+      { name: 'C++' },
+      { name: 'TypeScript' },
+      { name: 'SQL' },
+    ],
   },
   {
-    title: "Backend",
-    icon: Server,
-    skills: [
-      { name: "FastAPI", icon: Server },
-      { name: "Streamlit", icon: Terminal },
-      { name: "C++", icon: Code2 },
-      { name: "Docker", icon: Container },
-    ]
+    group: 'LLM & agents',
+    items: [
+      { name: 'LangChain', primary: true },
+      { name: 'LangGraph', primary: true },
+      { name: 'MCP', primary: true },
+      { name: 'Groq' },
+      { name: 'Gemini' },
+      { name: 'Ollama' },
+    ],
   },
   {
-    title: "Tools & DevOps",
-    icon: Wrench,
-    skills: [
-      { name: "GitHub Actions", icon: GitBranch },
-      { name: "Docker", icon: Container },
-      { name: "Git", icon: GitBranch },
-      { name: "VS Code", icon: Code2 },
-      { name: "MCP", icon: Workflow },
-    ]
-  }
+    group: 'Retrieval & ML',
+    items: [
+      { name: 'FAISS', primary: true },
+      { name: 'ChromaDB' },
+      { name: 'Sentence Transformers', primary: true },
+      { name: 'Scikit-learn' },
+      { name: 'RAG evaluation' },
+    ],
+  },
+  {
+    group: 'Backend & serving',
+    items: [
+      { name: 'FastAPI', primary: true },
+      { name: 'Server-Sent Events' },
+      { name: 'Celery' },
+      { name: 'Redis' },
+      { name: 'Streamlit' },
+    ],
+  },
+  {
+    group: 'Infrastructure',
+    items: [
+      { name: 'Docker', primary: true },
+      { name: 'GitHub Actions', primary: true },
+      { name: 'Git' },
+      { name: 'Vercel' },
+    ],
+  },
 ];
 
 export default function Skills() {
   return (
-    <section id="skills" className="py-24 relative">
-      <div className="max-w-7xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl font-bold mb-4">
-            Skills & <span className="gradient-text">Technologies</span>
-          </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">
-            A curated collection of technologies I work with to build intelligent systems.
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {skillCategories.map((category, catIndex) => (
-            <motion.div
-              key={category.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: catIndex * 0.1 }}
-              className="glass rounded-2xl p-6"
-            >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
-                  <category.icon className="text-indigo-400" size={20} />
-                </div>
-                <h3 className="text-xl font-semibold">{category.title}</h3>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {category.skills.map((skill, skillIndex) => (
-                  <motion.span
-                    key={skill.name}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ 
-                      duration: 0.3, 
-                      delay: catIndex * 0.1 + skillIndex * 0.05 
-                    }}
-                    whileHover={{ scale: 1.05 }}
-                    className="px-4 py-2 bg-white/5 rounded-lg text-sm flex items-center gap-2 hover:bg-white/10 transition-colors cursor-default"
-                  >
-                    <skill.icon size={14} className="text-indigo-400" />
-                    {skill.name}
-                  </motion.span>
-                ))}
-              </div>
-            </motion.div>
-          ))}
+    <Section
+      id="stack"
+      index="03"
+      title="Stack"
+      description="Tools I have shipped something real with. Highlighted entries are the ones I reach for first."
+      action={
+        <div className="mono-meta flex items-center gap-2">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+          Primary
         </div>
+      }
+    >
+      <div className="overflow-hidden rounded-xl border border-[var(--border)]">
+        {stack.map((row, i) => (
+          <Reveal
+            key={row.group}
+            delay={i * 0.05}
+            className="border-b border-[var(--border)] last:border-b-0"
+          >
+            <div className="grid gap-4 px-5 py-6 md:grid-cols-[180px_minmax(0,1fr)] md:items-baseline md:gap-8 md:px-7">
+              <div className="flex items-baseline gap-3">
+                <h3 className="text-sm font-medium">{row.group}</h3>
+                <span className="mono-meta">{String(row.items.length).padStart(2, '0')}</span>
+              </div>
+
+              <ul className="flex flex-wrap gap-2">
+                {row.items.map((item) => (
+                  <li key={item.name} className={item.primary ? 'tag tag-accent' : 'tag'}>
+                    {item.name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
+        ))}
       </div>
-    </section>
+    </Section>
   );
 }

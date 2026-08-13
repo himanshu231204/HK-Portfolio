@@ -1,120 +1,180 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { GitFork } from 'lucide-react';
-import { Github } from '@/components/SocialIcons';
+import { useEffect, useMemo, useState } from 'react';
+import { ArrowUpRight } from 'lucide-react';
+import Section from '@/components/ui/Section';
+import Reveal from '@/components/ui/Reveal';
+import { fetchGitHubRepos, fetchGitHubUser, type GitHubRepo, type GitHubUser } from '@/utils/api';
 
 const GITHUB_USERNAME = 'himanshu231204';
 
+/**
+ * Muted mid-tone hues, legible against both the light and dark surface tokens.
+ * Deliberately not a saturated rainbow — this is a distribution, not a party.
+ */
+const LANGUAGE_COLORS = ['#7c93ff', '#5ec8c0', '#e0a458', '#c77dbb', '#7fb069', '#8b93a1'];
+
+interface LanguageSlice {
+  name: string;
+  count: number;
+  share: number;
+  color: string;
+}
+
+function buildLanguageBreakdown(repos: GitHubRepo[]): LanguageSlice[] {
+  const counts = new Map<string, number>();
+  repos.forEach((repo) => {
+    if (repo.language) counts.set(repo.language, (counts.get(repo.language) ?? 0) + 1);
+  });
+
+  const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  const top = sorted.slice(0, 5);
+  const restTotal = sorted.slice(5).reduce((sum, [, count]) => sum + count, 0);
+  const entries = restTotal > 0 ? [...top, ['Other', restTotal] as const] : top;
+
+  const total = entries.reduce((sum, [, count]) => sum + count, 0);
+  if (total === 0) return [];
+
+  return entries.map(([name, count], i) => ({
+    name,
+    count,
+    share: (count / total) * 100,
+    color: LANGUAGE_COLORS[i % LANGUAGE_COLORS.length],
+  }));
+}
+
 export default function GitHubStats() {
+  const [repos, setRepos] = useState<GitHubRepo[]>([]);
+  const [user, setUser] = useState<GitHubUser | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    Promise.all([fetchGitHubRepos(GITHUB_USERNAME), fetchGitHubUser(GITHUB_USERNAME)])
+      .then(([repoData, userData]) => {
+        if (cancelled) return;
+        setRepos(repoData);
+        setUser(userData);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const languages = useMemo(() => buildLanguageBreakdown(repos), [repos]);
+
+  const totals = useMemo(() => {
+    const ownRepos = repos.filter((repo) => repo.visibility !== 'private');
+    return {
+      repos: user?.public_repos ?? ownRepos.length,
+      stars: repos.reduce((sum, repo) => sum + repo.stargazers_count, 0),
+      forks: repos.reduce((sum, repo) => sum + repo.forks_count, 0),
+      followers: user?.followers ?? 0,
+    };
+  }, [repos, user]);
+
+  // fetchGitHubRepos/User swallow errors and return []/null, so "nothing came
+  // back at all" is how an unreachable or rate-limited API surfaces here.
+  // Showing four zeroes would read as a real (and unflattering) result.
+  const unavailable = !loading && repos.length === 0 && user === null;
+
+  const stats = [
+    { label: 'Public repos', value: totals.repos },
+    { label: 'Stars earned', value: totals.stars },
+    { label: 'Forks', value: totals.forks },
+    { label: 'Followers', value: totals.followers },
+  ];
+
   return (
-    <section id="github" className="py-16 relative overflow-hidden bg-[#020617]">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#020617] via-[#0B1120] to-[#020617]" />
-      
-      {/* Radial glow behind center */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-[radial-gradient(circle_at_center,rgba(0,217,255,0.15),transparent_60%)]" />
-      
-      {/* Ambient orbs */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-[100px]" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px]" />
-      
-      <div className="max-w-5xl mx-auto px-6 relative z-10">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+    <Section
+      id="github"
+      index="04"
+      title="Building in public"
+      description="Live from the GitHub API — no screenshots, no cached badges."
+      action={
+        <a
+          href={`https://github.com/${GITHUB_USERNAME}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mono-meta link-underline inline-flex items-center gap-1.5 text-ink-muted hover:text-ink"
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 bg-cyan-500/10 border border-cyan-500/20 rounded-full text-cyan-400 text-xs font-medium mb-4"
-          >
-            <Github size={12} />
-            <span>GitHub Stats</span>
-          </motion.div>
-          
-          <h2 className="text-4xl font-bold tracking-tight">
-            Building in <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">public</span>
-          </h2>
-          <p className="text-gray-400 mt-2 text-sm">Consistency over perfection</p>
-        </motion.div>
+          @{GITHUB_USERNAME} <ArrowUpRight size={13} />
+        </a>
+      }
+    >
+      <Reveal>
+        <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--border)] md:grid-cols-4">
+          {stats.map((stat) => (
+            <div key={stat.label} className="bg-[var(--bg)] px-5 py-6">
+              <dt className="mono-label">{stat.label}</dt>
+              <dd className="mt-2.5 text-3xl font-semibold tracking-tight tabular-nums">
+                {loading ? (
+                  <span className="inline-block h-8 w-14 animate-pulse rounded bg-[var(--surface-hover)] align-middle" />
+                ) : unavailable ? (
+                  <span className="text-ink-faint">—</span>
+                ) : (
+                  stat.value.toLocaleString()
+                )}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </Reveal>
 
-        
+      {/* Language distribution ------------------------------------------- */}
+      <Reveal delay={0.08}>
+        <div className="mt-6 rounded-xl border border-[var(--border)] px-5 py-6 md:px-7">
+          <div className="flex items-baseline justify-between gap-4">
+            <h3 className="text-sm font-medium">Language distribution</h3>
+            <span className="mono-meta">by repository count</span>
+          </div>
 
-        {/* Streak Image */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          whileHover={{ scale: 1.02 }}
-          className="p-4 rounded-2xl bg-gradient-to-br from-orange-500/10 to-pink-500/10 backdrop-blur-xl border border-white/10 shadow-lg hover:shadow-[0_0_40px_rgba(0,217,255,0.15)] hover:border-cyan-400/30 transition-all duration-300 mb-4"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img 
-            src={`https://streak-stats.demolab.com/?user=${GITHUB_USERNAME}&theme=tokyonight&hide_border=true&background=0D1117&ring=00D9FF&fire=FF6E00&currStreakLabel=00D9FF`}
-            alt="GitHub Streak"
-            className="w-full rounded-xl max-h-[180px] object-contain"
-          />
-        </motion.div>
+          {loading ? (
+            <div className="mt-5 h-2 animate-pulse rounded-full bg-[var(--surface-hover)]" />
+          ) : languages.length === 0 ? (
+            <p className="prose-muted mt-4 text-sm">
+              GitHub data is unavailable right now — the profile link above still works.
+            </p>
+          ) : (
+            <>
+              <div
+                className="mt-5 flex h-2 gap-0.5 overflow-hidden rounded-full"
+                role="img"
+                aria-label={`Language distribution: ${languages
+                  .map((l) => `${l.name} ${Math.round(l.share)}%`)
+                  .join(', ')}`}
+              >
+                {languages.map((lang) => (
+                  <div
+                    key={lang.name}
+                    style={{ width: `${lang.share}%`, backgroundColor: lang.color }}
+                    title={`${lang.name} — ${lang.count} repos`}
+                  />
+                ))}
+              </div>
 
-        {/* Activity Graph */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          whileHover={{ scale: 1.02 }}
-          className="p-4 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-lg hover:shadow-[0_0_40px_rgba(0,217,255,0.15)] hover:border-cyan-400/30 transition-all duration-300 mb-6"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img 
-            src={`https://github-readme-activity-graph.vercel.app/graph?username=${GITHUB_USERNAME}&theme=tokyo-night&hide_border=true&bg_color=0D1117&color=00D9FF&line=00D9FF&point=FF6E00`}
-            alt="Activity Graph"
-            className="w-full rounded-xl max-h-[200px] object-contain"
-          />
-        </motion.div>
-
-        {/* Divider */}
-        <div className="h-px bg-gradient-to-b from-transparent via-white/20 to-transparent mb-8" />
-
-        {/* Action Buttons */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-          className="flex justify-center gap-4"
-        >
-          <motion.a
-            href={`https://github.com/${GITHUB_USERNAME}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="px-6 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm flex items-center gap-2 hover:bg-white/10 hover:border-white/20 transition-all hover:shadow-[0_0_20px_rgba(0,217,255,0.2)]"
-          >
-            <Github size={16} />
-            View Profile
-          </motion.a>
-          <motion.a
-            href={`https://github.com/${GITHUB_USERNAME}?tab=repositories`}
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="px-6 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm flex items-center gap-2 hover:bg-white/10 hover:border-white/20 transition-all hover:shadow-[0_0_20px_rgba(0,217,255,0.2)]"
-          >
-            <GitFork size={16} />
-            View Repos
-          </motion.a>
-        </motion.div>
-      </div>
-    </section>
+              <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2.5">
+                {languages.map((lang) => (
+                  <li key={lang.name} className="flex items-center gap-2">
+                    <span
+                      className="h-2 w-2 shrink-0 rounded-full"
+                      style={{ backgroundColor: lang.color }}
+                      aria-hidden
+                    />
+                    <span className="text-sm">{lang.name}</span>
+                    <span className="mono-meta">{Math.round(lang.share)}%</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
+      </Reveal>
+    </Section>
   );
 }

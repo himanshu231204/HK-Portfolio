@@ -25,5 +25,9 @@ export const metadata: Metadata = {
 };
 
 export default function ArticlesPage() {
-  return <ArticlesSection />;
+  return (
+    <div className="pt-16">
+      <ArticlesSection />
+    </div>
+  );
 }

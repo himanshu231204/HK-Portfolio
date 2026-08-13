@@ -1,85 +1,71 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { Sparkles, Code, GraduationCap, Building2 } from 'lucide-react';
+import Section from '@/components/ui/Section';
+import Reveal from '@/components/ui/Reveal';
+
+const focusAreas = [
+  {
+    title: 'Retrieval systems',
+    body: 'RAG pipelines end to end — chunking, embeddings, vector search and the evaluation harness that tells you whether any of it actually improved.',
+  },
+  {
+    title: 'Agentic infrastructure',
+    body: 'LangGraph workflows and MCP servers: the protocol plumbing that lets models call real tools reliably rather than in a demo.',
+  },
+  {
+    title: 'Developer tooling',
+    body: 'CLIs that live in a terminal and get used daily — local-first, offline-capable, and fast enough that nobody reaches for the old command.',
+  },
+];
 
 export default function About() {
-  const highlights = [
-    {
-      icon: Building2,
-      title: "Founder of OpenAgentHQ",
-      description: "Building open source tools around agentic systems, RAG pipelines, and LLM infrastructure — from CLI tools with real installs to evaluation frameworks."
-    },
-    {
-      icon: Sparkles,
-      title: "Learning by Building",
-      description: "I believe in learning by building — not just consuming tutorials — and sharing everything publicly through open source."
-    },
-    {
-      icon: Code,
-      title: "System Design Focus",
-      description: "My core interest lies in designing systems, not just models — focusing on retrieval, pipelines, and deployment."
-    },
-    {
-      icon: GraduationCap,
-      title: "Computer Science",
-      description: "Bihar Engineering University (BEU), Patna"
-    }
-  ];
-
   return (
-    <section id="about" className="py-24 relative">
-      <div className="max-w-7xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl font-bold mb-4">
-            About <span className="gradient-text">Me</span>
-          </h2>
-          <p className="text-slate-400 max-w-2xl mx-auto">
-            CS engineering student and AI engineer. Founder of OpenAgentHQ. I build and ship open source tools around agentic systems, RAG pipelines, and LLM infrastructure.
+    <Section
+      id="about"
+      index="05"
+      title="About"
+      description="CS engineering student at BEU Patna and AI engineer. I build in the open and treat every project as a system, not a notebook."
+      className="border-y border-[var(--border)] bg-[var(--bg-subtle)]"
+    >
+      <div className="grid gap-14 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+        {/* Narrative */}
+        <Reveal className="space-y-5">
+          <p className="text-lg leading-relaxed text-ink">
+            I started where most people do — tutorials. What changed things was
+            shipping: putting a CLI on PyPI, watching strangers install it, and
+            discovering how much of the work is everything around the model.
           </p>
-        </motion.div>
+          <p className="prose-muted">
+            That is the throughline of everything here. RAGNOVA taught me that a
+            retrieval pipeline is only as good as its evaluation, which became{' '}
+            <span className="text-ink">openagent-eval</span>. Wanting local,
+            private commit messages became{' '}
+            <span className="text-ink">run-git</span> and{' '}
+            <span className="text-ink">AI Commit</span>. Wanting agents to reach
+            live information became{' '}
+            <span className="text-ink">mcp-web-search</span>.
+          </p>
+          <p className="prose-muted">
+            I run <span className="text-ink">OpenAgentHQ</span> as the home for
+            that work — agentic systems, LLM infrastructure and developer
+            tooling, all public, all reviewable. I am currently looking for an
+            AI/ML or GenAI internship where the problems are real and the
+            feedback loop is short.
+          </p>
+        </Reveal>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {highlights.map((item, index) => (
-            <motion.div
-              key={item.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              whileHover={{ y: -5 }}
-              className="glass rounded-2xl p-6 hover:bg-white/5 transition-colors"
-            >
-              <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center mb-4">
-                <item.icon className="text-indigo-400" size={24} />
+        {/* Focus areas */}
+        <div className="space-y-px overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--border)]">
+          {focusAreas.map((area, i) => (
+            <Reveal key={area.title} delay={i * 0.06}>
+              <div className="bg-[var(--bg)] px-5 py-6">
+                <h3 className="text-sm font-medium">{area.title}</h3>
+                <p className="prose-muted mt-2 text-sm">{area.body}</p>
               </div>
-              <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                {item.description}
-              </p>
-            </motion.div>
+            </Reveal>
           ))}
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="mt-12 glass rounded-2xl p-8"
-        >
-          <h3 className="text-xl font-semibold mb-4">Currently Seeking</h3>
-          <p className="text-slate-300">
-            <span className="text-indigo-400 font-semibold">AI/ML/GenAI Internship Opportunities</span>
-          </p>
-        </motion.div>
       </div>
-    </section>
+    </Section>
   );
 }

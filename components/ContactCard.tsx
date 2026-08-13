@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { Check, Copy } from 'lucide-react';
 
 interface ContactCardProps {
   icon: React.ReactNode;
@@ -9,69 +9,63 @@ interface ContactCardProps {
   value: string;
   href?: string;
   copyText?: string;
-  delay?: number;
 }
 
-export default function ContactCard({ icon, label, value, href, copyText, delay = 0 }: ContactCardProps) {
+/**
+ * A compact directory row. The previous version wrapped each channel in a
+ * blurred rainbow glow that fired on hover — six of them at once made the
+ * contact section the loudest thing on the page.
+ */
+export default function ContactCard({ icon, label, value, href, copyText }: ContactCardProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
-    if (!copyText) {
-      return;
-    }
-
+    if (!copyText) return;
     try {
       await navigator.clipboard.writeText(copyText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error('Failed to copy:', err);
+    } catch {
+      // Clipboard permission denied — the value is visible on screen regardless.
     }
   };
 
-  const content = (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-      whileHover={{ y: -5 }}
-      className="relative group"
-    >
-      {/* Glow effect */}
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl opacity-0 group-hover:opacity-100 transition duration-500 blur-sm" />
-      
-      <div className="relative glass rounded-2xl p-6 flex items-center gap-4 hover:bg-white/5 transition-colors">
-        <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-          {icon}
-        </div>
-        
-        <div className="flex-1 min-w-0">
-          <p className="text-slate-500 text-xs mb-1">{label}</p>
-          <p className="text-slate-200 font-medium truncate">{value}</p>
-        </div>
-
-        {copyText && (
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleCopy}
-            className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs text-slate-400 transition-colors"
-          >
-            {copied ? 'Copied!' : 'Copy'}
-          </motion.button>
-        )}
-      </div>
-    </motion.div>
+  const body = (
+    <>
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--bg-subtle)] text-ink-muted">
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="mono-label block">{label}</span>
+        <span className="mt-1 block truncate text-sm">{value}</span>
+      </span>
+    </>
   );
 
-  if (href) {
-    return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className="block">
-        {content}
-      </a>
-    );
-  }
+  return (
+    <div className="group flex items-center gap-3 border-b border-[var(--border)] py-3.5 last:border-b-0">
+      {href ? (
+        <a
+          href={href}
+          target={href.startsWith('mailto:') ? undefined : '_blank'}
+          rel="noopener noreferrer"
+          className="flex min-w-0 flex-1 items-center gap-3 transition-colors hover:text-[var(--accent)]"
+        >
+          {body}
+        </a>
+      ) : (
+        <span className="flex min-w-0 flex-1 items-center gap-3">{body}</span>
+      )}
 
-  return content;
+      {copyText && (
+        <button
+          onClick={handleCopy}
+          aria-label={`Copy ${label}`}
+          className="shrink-0 rounded-md p-2 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink"
+        >
+          {copied ? <Check size={14} className="text-[var(--positive)]" /> : <Copy size={14} />}
+        </button>
+      )}
+    </div>
+  );
 }
