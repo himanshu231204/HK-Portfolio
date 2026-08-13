@@ -86,13 +86,15 @@ GitHub/LinkedIn icons). No barrel exports (`index.ts` files).
 
 ```
 app/
-├── globals.css        # Global styles, animations, custom classes
-├── layout.tsx          # Root layout with metadata
+├── globals.css         # Design tokens (light + dark), typography, utilities
+├── layout.tsx          # Root layout, fonts, metadata, no-flash theme script
 ├── page.tsx            # Main page composing all sections
+├── articles/layout.tsx # Navbar + footer chrome for the article routes
 └── favicon.ico
 
 components/
-├── sections/           # Page sections (Hero, About, Skills, Projects, etc.)
+├── sections/           # Page sections (Hero, Projects, Skills, etc.)
+├── ui/                 # Shared primitives — see below
 ├── PostCard.tsx        # Reusable post card component
 └── SocialIcons.tsx     # Custom SVG icons (GitHub, LinkedIn, Twitter)
 
@@ -106,6 +108,24 @@ utils/
 public/data/
 └── featuredPosts.json    # Featured posts data (LinkedIn)
 ```
+
+**Design system rules — follow these when touching any UI:**
+
+- **Colours come from tokens, never hardcoded.** Use `text-ink`,
+  `text-ink-muted`, `text-ink-faint`, `bg-bg`, `bg-surface`, or
+  `var(--border)` / `var(--accent)`. A literal `slate-400`, `indigo-500`
+  or `bg-white/5` will look broken in light mode.
+- **`components/ui/Section.tsx`** wraps every page section: numbered mono
+  index, left-aligned heading, optional right-hand action. Keep the index
+  numbers sequential with the order in `app/page.tsx`.
+- **`components/ui/Reveal.tsx`** is the only entrance animation. Do not add
+  per-component `initial`/`whileInView` variants. Reduced motion is handled
+  by the `[data-reveal]` rule in `globals.css`, not by branching in JS —
+  branching desyncs SSR and hydration and leaves content invisible.
+- **`components/ui/GridFillers.tsx`** completes the last row of any
+  `gap-px` hairline grid; without it a partial row shows raw border colour.
+- Hover states shift border and background colour. No scale transforms, no
+  glow shadows, no gradient text.
 
 Next.js 16, App Router, all animated components are client-side.
 ESLint: `eslint-config-next/core-web-vitals` + `eslint-config-next/typescript`.

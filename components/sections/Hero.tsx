@@ -1,198 +1,160 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { ArrowRight, Mail, Download } from 'lucide-react';
+import { ArrowRight, Download, Mail } from 'lucide-react';
 import { Github, Linkedin, Twitter } from '@/components/SocialIcons';
+import Reveal from '@/components/ui/Reveal';
+import { ButtonLink } from '@/components/ui/Button';
+
+/**
+ * Proof points, not adjectives. Every number here is already asserted
+ * elsewhere in the repo (Context.md / Contributions.tsx) — nothing invented.
+ */
+const proof = [
+  { value: '7,000+', label: 'PyPI downloads', detail: 'run-git' },
+  { value: '13+', label: 'Merged PRs', detail: 'openagent-eval' },
+  { value: '18+', label: 'Eval metrics', detail: 'RAG + agents' },
+  { value: '2022–26', label: 'B.E. CSE', detail: 'BEU Patna' },
+];
+
+const socials = [
+  { href: 'https://github.com/himanshu231204', label: 'GitHub', Icon: Github },
+  { href: 'https://www.linkedin.com/in/himanshu231204/', label: 'LinkedIn', Icon: Linkedin },
+  { href: 'https://twitter.com/himanshu231204', label: 'Twitter', Icon: Twitter },
+  { href: 'mailto:himanshu231204@gmail.com', label: 'Email', Icon: Mail },
+];
 
 export default function Hero() {
   return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      <div className="absolute inset-0 grid-bg" />
-      <div className="absolute inset-0 radial-gradient" />
-      
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse-slow" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse-slow" />
+    <section className="relative overflow-hidden pt-36 pb-20 md:pt-44 md:pb-28">
+      <div className="grid-bg pointer-events-none absolute inset-0" aria-hidden />
 
-      <div className="max-w-7xl mx-auto px-6 py-32 relative z-10">
-        <div className="flex flex-col md:flex-row items-center gap-12">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex-1 text-center md:text-left"
-          >
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-indigo-400 font-mono text-sm mb-4"
-            >
-              Hello, I&apos;m
-            </motion.p>
-            
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-5xl md:text-7xl font-bold mb-4"
-            >
-              Himanshu <span className="gradient-text">Kumar</span>
-            </motion.h1>
-            
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-xl md:text-2xl text-slate-300 mb-2"
-            >
-              AI Engineer · Founder of{' '}
-              <a
-                href="https://github.com/OpenAgentHQ"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-indigo-400 hover:text-indigo-300 transition-colors"
-              >
-                OpenAgentHQ
-              </a>{' '}
-              · Open Source Contributor
-            </motion.p>
-            
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="text-lg text-slate-400 mb-8"
-            >
-              Building agentic systems, LLM infrastructure &amp; developer tools
-            </motion.p>
+      <div className="relative mx-auto max-w-6xl px-6">
+        <div className="grid items-start gap-14 lg:grid-cols-[minmax(0,1fr)_auto]">
+          {/* ---------------------------------------------------------------- */}
+          <div>
+            <Reveal>
+              <span className="inline-flex items-center gap-2.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5">
+                <span className="pulse-dot relative inline-block h-1.5 w-1.5 rounded-full bg-[var(--positive)]" />
+                <span className="mono-meta text-ink-muted">
+                  Open to AI/ML &amp; GenAI internships
+                </span>
+              </span>
+            </Reveal>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="flex flex-wrap gap-4 justify-center md:justify-start"
-            >
-              <motion.a
-                href="#projects"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-full flex items-center gap-2 font-medium transition-colors"
-              >
-                View Projects <ArrowRight size={18} />
-              </motion.a>
-              
-              <motion.a
-                href="#contact"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 glass rounded-full hover:bg-white/10 transition-colors flex items-center gap-2"
-              >
-                Contact Me
-              </motion.a>
+            <Reveal delay={0.05}>
+              <h1 className="display mt-7 text-5xl font-semibold md:text-7xl">
+                Himanshu Kumar
+              </h1>
+            </Reveal>
 
-              <motion.a
-                href="/resume.pdf"
-                download
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-6 py-3 glass rounded-full hover:bg-white/10 transition-colors flex items-center gap-2 cursor-pointer"
-              >
-                <Download size={18} /> Resume
-              </motion.a>
-            </motion.div>
+            <Reveal delay={0.1}>
+              <p className="mt-5 max-w-xl text-lg text-ink-muted md:text-xl">
+                AI engineer building{' '}
+                <span className="text-ink">agentic systems</span>,{' '}
+                <span className="text-ink">LLM infrastructure</span> and{' '}
+                <span className="text-ink">developer tools</span>. Founder of{' '}
+                <a
+                  href="https://github.com/OpenAgentHQ"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline text-[var(--accent)]"
+                >
+                  OpenAgentHQ
+                </a>
+                .
+              </p>
+            </Reveal>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="flex gap-6 mt-8 justify-center md:justify-start"
-            >
-              <a
-                href="https://github.com/himanshu231204"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-400 hover:text-white transition-colors"
-              >
-                <Github size={24} />
-              </a>
-              <a
-                href="https://www.linkedin.com/in/himanshu231204/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-400 hover:text-white transition-colors"
-              >
-                <Linkedin size={24} />
-              </a>
-              <a
-                href="https://twitter.com/himanshu231204"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-400 hover:text-white transition-colors"
-              >
-                <Twitter size={24} />
-              </a>
-              <a
-                href="mailto:himanshu231204@gmail.com"
-                className="text-slate-400 hover:text-white transition-colors"
-              >
-                <Mail size={24} />
-              </a>
-            </motion.div>
-          </motion.div>
+            <Reveal delay={0.15}>
+              <p className="prose-muted mt-5 max-w-xl text-[0.95rem]">
+                My core interest lies in designing systems, not just models —
+                retrieval, pipelines and deployment. I learn by building, and
+                ship it in the open.
+              </p>
+            </Reveal>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="relative"
-          >
-            {/* Blurred gradient background behind image */}
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 blur-2xl opacity-50 rounded-full" />
-            
-            {/* Profile Image */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.3 }}
-              className="relative"
-            >
-              {/* Using img here for DOM fallback handling on load error */}
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/images/mypic.jpeg"
-                alt="Himanshu Kumar"
-                className="w-64 h-64 md:w-80 md:h-80 rounded-full object-cover border border-white/10 shadow-[0_0_40px_rgba(139,92,246,0.5)] transition-all duration-300"
-                onError={(e) => {
-                  // Fallback: show gradient with HK if image fails
-                  const target = e.currentTarget;
-                  target.style.display = 'none';
-                  const fallback = target.nextElementSibling as HTMLElement;
-                  if (fallback) fallback.style.display = 'flex';
-                }}
-              />
-              {/* Fallback - shown if image fails to load */}
-              <div 
-                className="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden gradient-border glow-effect bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 absolute top-0 left-0 hidden items-center justify-center"
-              >
-                <span className="text-8xl font-bold text-white/20">HK</span>
+            <Reveal delay={0.2}>
+              <div className="mt-9 flex flex-wrap items-center gap-3">
+                <ButtonLink href="#projects" variant="primary" size="lg">
+                  View work <ArrowRight size={16} />
+                </ButtonLink>
+                <ButtonLink href="/resume.pdf" download size="lg">
+                  <Download size={16} /> Résumé
+                </ButtonLink>
+                <ButtonLink href="#contact" variant="ghost" size="lg">
+                  Get in touch
+                </ButtonLink>
               </div>
-            </motion.div>
-            
-            {/* Rotating dashed border */}
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-0 rounded-full border-2 border-dashed border-indigo-500/30"
-              style={{ padding: '10px' }}
-            />
-            
-            {/* Floating animation wrapper */}
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute inset-0"
-            />
-          </motion.div>
+            </Reveal>
+
+            <Reveal delay={0.25}>
+              <div className="mt-9 flex items-center gap-1">
+                {socials.map(({ href, label, Icon }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target={href.startsWith('mailto:') ? undefined : '_blank'}
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="rounded-lg p-2.5 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink"
+                  >
+                    <Icon size={18} />
+                  </a>
+                ))}
+              </div>
+            </Reveal>
+          </div>
+
+          {/* ---------------------------------------------------------------- */}
+          {/* Portrait: a plain framed square. The rotating dashed ring and     */}
+          {/* multi-stop gradient blur previously around it read as decoration  */}
+          {/* for its own sake.                                                 */}
+          <Reveal delay={0.1} className="order-first lg:order-none">
+            <div className="relative w-fit">
+              <div className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-1.5">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/mypic.jpeg"
+                  alt="Himanshu Kumar"
+                  width={272}
+                  height={272}
+                  className="h-56 w-56 rounded-xl object-cover md:h-68 md:w-68"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    target.style.display = 'none';
+                    const fallback = target.nextElementSibling as HTMLElement | null;
+                    if (fallback) fallback.style.display = 'flex';
+                  }}
+                />
+                <div className="hidden h-56 w-56 items-center justify-center rounded-xl bg-[var(--bg-subtle)] md:h-68 md:w-68">
+                  <span className="text-5xl font-semibold text-ink-faint">HK</span>
+                </div>
+              </div>
+
+              {/* Wraps rather than colliding when the frame is narrow on mobile. */}
+              <div className="mono-meta mt-3 flex flex-wrap justify-between gap-x-4 gap-y-0.5 px-1">
+                <span>Patna, Bihar · IN</span>
+                <span>@himanshu231204</span>
+              </div>
+            </div>
+          </Reveal>
         </div>
+
+        {/* ------------------------------------------------------------------ */}
+        {/* Proof strip: the evidence a recruiter scans for, above the fold.    */}
+        <Reveal delay={0.3}>
+          <dl className="mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--border)] md:mt-20 md:grid-cols-4">
+            {proof.map((item) => (
+              <div key={item.label} className="bg-[var(--bg)] px-5 py-6">
+                <dt className="mono-label">{item.label}</dt>
+                <dd className="mt-2.5 text-2xl font-semibold tracking-tight">
+                  {item.value}
+                </dd>
+                <dd className="mono-meta mt-1">{item.detail}</dd>
+              </div>
+            ))}
+          </dl>
+        </Reveal>
       </div>
     </section>
   );

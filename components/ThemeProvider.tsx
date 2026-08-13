@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useCallback, useContext, useSyncExternalStore, ReactNode } from 'react';
 
 type Theme = 'dark' | 'light';
 
@@ -12,34 +12,58 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const STORAGE_KEY = 'portfolio-theme';
+
+/* -------------------------------------------------------------------------
+ * The class on <html> is the source of truth. The inline script in
+ * app/layout.tsx sets it before first paint, so the theme is external state
+ * that React subscribes to rather than something React owns — which is why
+ * this reads through useSyncExternalStore instead of syncing state in an
+ * effect (the previous approach risked a hydration mismatch).
+ * ---------------------------------------------------------------------- */
+
+const listeners = new Set<() => void>();
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => {
+    listeners.delete(listener);
+  };
+}
+
+function getSnapshot(): Theme {
+  return document.documentElement.classList.contains('light') ? 'light' : 'dark';
+}
+
+/** The server has no DOM; layout.tsx's default matches this. */
+function getServerSnapshot(): Theme {
+  return 'dark';
+}
+
+function applyTheme(next: Theme) {
+  const root = document.documentElement;
+  root.classList.remove('dark', 'light');
+  root.classList.add(next);
+  root.style.colorScheme = next;
+
+  try {
+    localStorage.setItem(STORAGE_KEY, next);
+  } catch {
+    // Storage can be unavailable (private mode); the theme still applies for this session.
+  }
+
+  listeners.forEach((listener) => listener());
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === 'undefined') {
-      return 'dark';
-    }
+  const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-    const stored = localStorage.getItem('portfolio-theme') as Theme | null;
-    if (stored === 'dark' || stored === 'light') {
-      return stored;
-    }
+  const setTheme = useCallback((next: Theme) => applyTheme(next), []);
 
-    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-  });
-
-  useEffect(() => {
-    // Update document class and localStorage
-    document.documentElement.classList.remove('dark', 'light');
-    document.documentElement.classList.add(theme);
-    localStorage.setItem('portfolio-theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setThemeState(prev => prev === 'dark' ? 'light' : 'dark');
-  };
-
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-  };
+  const toggleTheme = useCallback(
+    () => applyTheme(theme === 'dark' ? 'light' : 'dark'),
+    [theme]
+  );
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>

@@ -81,12 +81,17 @@ non-trivial public repos — not WIP scratch repos with no README.
 ## Site structure (confirmed against actual repo)
 
 Stack: Next.js 16 (App Router), TypeScript, Tailwind CSS v4, Framer
-Motion. Sections in order: Hero → About Me → Skills & Technologies →
-Featured Projects → GitHub Repositories (Featured/All/Tech tabs) →
-GitHub Stats (streak + activity graph, dynamically generated, don't
-hardcode) → **Latest Posts / LinkedIn Feed** (auto-updated, see below)
-→ Education & Interests → Certifications → Latest Articles → Featured
-Posts → Contact → Footer.
+Motion. Sections lead with evidence and are numbered in the UI:
+Hero → 01 Selected work (featured projects + live GitHub repo browser)
+→ 02 Open source (merged contributions) → 03 Stack → 04 Building in
+public (live GitHub stats + language distribution, computed from the
+API — never hardcode) → 05 About → 06 Writing (articles) → 07 Posts
+(LinkedIn) → 08 Background (education + interests) → 09 Certifications
+→ 10 Contact → Footer.
+
+If you add or reorder a section, renumber the `index` prop on every
+`Section` so the sequence stays consecutive, and update the `navLinks`
+list in `Navbar.tsx`.
 
 Contact links shown: Email, GitHub, LinkedIn, Twitter (X), WhatsApp
 (+91-8777579795).
@@ -98,7 +103,9 @@ Contact links shown: Email, GitHub, LinkedIn, Twitter (X), WhatsApp
 - GitHub API helpers → `utils/api.ts`
 - Shared types → `utils/types.ts`
 - Custom social icons → `components/SocialIcons.tsx` (not lucide-react)
-- Global styles/animations → `app/globals.css`
+- Design tokens (light + dark palettes) → `app/globals.css`
+- Shared UI primitives (Section, Reveal, Button, GridFillers) →
+  `components/ui/`
 - Page metadata (title, og:image, canonical) → `app/layout.tsx`
 
 ## Things the agent should never invent

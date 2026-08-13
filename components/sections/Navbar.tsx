@@ -1,163 +1,143 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Menu, X, Mail } from 'lucide-react';
-import { Github, Linkedin, Twitter } from '@/components/SocialIcons';
+import Link from 'next/link';
+import { Menu, X } from 'lucide-react';
+import { Github } from '@/components/SocialIcons';
 import ThemeToggle from '@/components/ThemeToggle';
 
+// Hrefs are root-relative so the nav also works from /articles and other
+// sub-routes, where a bare "#projects" would have nothing to scroll to.
 const navLinks = [
-  { name: 'About', href: '#about' },
-  { name: 'Skills', href: '#skills' },
-  { name: 'Projects', href: '#projects' },
-  { name: 'Contributions', href: '#contributions' },
-  { name: 'Certifications', href: '#certifications' },
-  { name: 'Articles', href: '#articles' },
-  { name: 'GitHub', href: '#github' },
-  { name: 'Contact', href: '#contact' },
+  { name: 'Work', id: 'projects' },
+  { name: 'Open source', id: 'contributions' },
+  { name: 'Stack', id: 'stack' },
+  { name: 'Writing', id: 'writing' },
+  { name: 'About', id: 'about' },
 ];
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 24);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Highlight whichever section currently occupies the upper third of the
+  // viewport, so the nav reflects where the reader actually is.
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (visible) setActiveSection(visible.target.id);
+      },
+      { rootMargin: '-20% 0px -70% 0px', threshold: 0 }
+    );
+
+    navLinks
+      .map((link) => document.getElementById(link.id))
+      .filter((el): el is HTMLElement => el !== null)
+      .forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'glass py-3' : 'py-5'
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-200 ${
+        isScrolled
+          ? 'border-b border-[var(--border)] bg-[color-mix(in_srgb,var(--bg)_82%,transparent)] backdrop-blur-xl'
+          : 'border-b border-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <motion.a
-          href="#"
-          className="text-xl font-bold gradient-text"
-          whileHover={{ scale: 1.05 }}
+      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 text-sm font-semibold tracking-tight"
         >
-          HK
-        </motion.a>
+          <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--surface)] font-mono text-[0.7rem]">
+            HK
+          </span>
+          <span className="hidden sm:inline">Himanshu Kumar</span>
+        </Link>
 
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <motion.a
-              key={link.name}
-              href={link.href}
-              className="text-sm text-slate-300 hover:text-white transition-colors"
-              whileHover={{ y: -2 }}
-            >
-              {link.name}
-            </motion.a>
-          ))}
+        <div className="hidden items-center gap-1 md:flex">
+          {navLinks.map((link) => {
+            const isActive = activeSection === link.id;
+            return (
+              <Link
+                key={link.name}
+                href={`/#${link.id}`}
+                aria-current={isActive ? 'true' : undefined}
+                className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
+                  isActive ? 'text-ink' : 'text-ink-muted hover:text-ink'
+                }`}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
-          <ThemeToggle />
-          <motion.a
+        <div className="flex items-center gap-1">
+          <a
             href="https://github.com/himanshu231204"
             target="_blank"
             rel="noopener noreferrer"
-            whileHover={{ scale: 1.1 }}
-            className="text-slate-400 hover:text-white transition-colors"
+            aria-label="GitHub"
+            className="hidden rounded-lg p-2 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink sm:block"
           >
-            <Github size={20} />
-          </motion.a>
-          <motion.a
-            href="https://www.linkedin.com/in/himanshu231204/"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.1 }}
-            className="text-slate-400 hover:text-white transition-colors"
+            <Github size={17} />
+          </a>
+          <ThemeToggle />
+          <Link
+            href="/#contact"
+            className="ml-1 hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3.5 py-2 text-sm transition-colors hover:border-[var(--border-strong)] hover:bg-[var(--surface-hover)] md:inline-flex"
           >
-            <Linkedin size={20} />
-          </motion.a>
-          <motion.a
-            href="https://twitter.com/himanshu231204"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.1 }}
-            className="text-slate-400 hover:text-white transition-colors"
-          >
-            <Twitter size={20} />
-          </motion.a>
-          <motion.a
-            href="mailto:himanshu231204@gmail.com"
-            whileHover={{ scale: 1.1 }}
-            className="text-slate-400 hover:text-white transition-colors"
-          >
-            <Mail size={20} />
-          </motion.a>
-        </div>
+            Contact
+          </Link>
 
-        <button
-          className="md:hidden text-slate-300"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
+          <button
+            className="rounded-lg p-2 text-ink-muted transition-colors hover:bg-[var(--surface)] hover:text-ink md:hidden"
+            onClick={() => setIsMobileMenuOpen((open) => !open)}
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMobileMenuOpen}
+          >
+            {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+      </nav>
 
       {isMobileMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="md:hidden glass mt-2 mx-4 rounded-xl p-6"
-        >
-          <div className="flex flex-col gap-4">
+        <div className="border-t border-[var(--border)] bg-[var(--bg)] px-6 py-4 md:hidden">
+          <div className="flex flex-col">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.name}
-                href={link.href}
+                href={`/#${link.id}`}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="text-slate-300 hover:text-white transition-colors"
+                className="border-b border-[var(--border)] py-3 text-sm text-ink-muted transition-colors last:border-0 hover:text-ink"
               >
                 {link.name}
-              </a>
+              </Link>
             ))}
-            <div className="flex items-center gap-4 mt-4 pt-4 border-t border-slate-800">
-              <ThemeToggle />
-              <a
-                href="https://github.com/himanshu231204"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-400 hover:text-white"
-              >
-                <Github size={20} />
-              </a>
-              <a
-                href="https://www.linkedin.com/in/himanshu231204/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-400 hover:text-white"
-              >
-                <Linkedin size={20} />
-              </a>
-              <a
-                href="https://twitter.com/himanshu231204"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-400 hover:text-white"
-              >
-                <Twitter size={20} />
-              </a>
-              <a
-                href="mailto:himanshu231204@gmail.com"
-                className="text-slate-400 hover:text-white"
-              >
-                <Mail size={20} />
-              </a>
-            </div>
+            <Link
+              href="/#contact"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="mt-4 rounded-lg bg-[var(--accent)] px-4 py-2.5 text-center text-sm font-medium text-[var(--accent-contrast)]"
+            >
+              Contact
+            </Link>
           </div>
-        </motion.div>
+        </div>
       )}
-    </motion.nav>
+    </header>
   );
 }

@@ -1,13 +1,55 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="1200 630" width="1200" height="630">
-  <rect fill="#030014" width="1200" height="630"/>
-  <rect fill="url(#grad)" x="0" y="0" width="1200" height="630"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
   <defs>
-    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:0.3"/>
-      <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:0.3"/>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M60 0H0V60" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#08090b" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#08090b" stop-opacity="1"/>
     </linearGradient>
   </defs>
-  <text x="600" y="280" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#ffffff" text-anchor="middle">Himanshu Kumar</text>
-  <text x="600" y="360" font-family="Arial, sans-serif" font-size="32" fill="#94a3b8" text-anchor="middle">AI/ML & GenAI Engineer</text>
-  <text x="600" y="420" font-family="Arial, sans-serif" font-size="24" fill="#64748b" text-anchor="middle">Portfolio</text>
+
+  <rect width="1200" height="630" fill="#08090b"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#fade)"/>
+
+  <!-- Availability marker -->
+  <circle cx="88" cy="103" r="5" fill="#4ade80"/>
+  <text x="106" y="109" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="19"
+        fill="#99a1ac" letter-spacing="1.2">Open to AI/ML &amp; GenAI internships</text>
+
+  <!-- Name -->
+  <text x="80" y="252" font-family="Inter, Helvetica, Arial, sans-serif" font-size="92"
+        font-weight="700" fill="#e9ebee" letter-spacing="-3">Himanshu Kumar</text>
+
+  <!-- Role -->
+  <text x="80" y="316" font-family="Inter, Helvetica, Arial, sans-serif" font-size="34" fill="#99a1ac">
+    AI engineer · agentic systems, LLM infrastructure, developer tools
+  </text>
+
+  <!-- Rule -->
+  <rect x="80" y="390" width="1040" height="1" fill="#ffffff" fill-opacity="0.1"/>
+
+  <!-- Proof strip -->
+  <g font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="15" fill="#6a727e" letter-spacing="1.6">
+    <text x="80" y="440">PYPI DOWNLOADS</text>
+    <text x="360" y="440">MERGED PRS</text>
+    <text x="640" y="440">EVAL METRICS</text>
+    <text x="920" y="440">FOUNDER</text>
+  </g>
+  <g font-family="Inter, Helvetica, Arial, sans-serif" font-size="42" font-weight="600" fill="#e9ebee">
+    <text x="80" y="492">7,000+</text>
+    <text x="360" y="492">13+</text>
+    <text x="640" y="492">18+</text>
+    <text x="920" y="492" fill="#7c93ff">OpenAgentHQ</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="80" y="572" font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#6a727e">
+    himanshukumar.me
+  </text>
+  <text x="1120" y="572" text-anchor="end"
+        font-family="ui-monospace, 'SF Mono', Menlo, monospace" font-size="18" fill="#6a727e">
+    @himanshu231204
+  </text>
 </svg>
