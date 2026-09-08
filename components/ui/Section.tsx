@@ -43,7 +43,10 @@ export default function Section({
 
             <div className="mt-5 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div className="max-w-2xl">
-                <h2 className="heading text-3xl font-semibold md:text-4xl">{title}</h2>
+                <h2 className="heading text-3xl font-extrabold tracking-tight uppercase md:text-4xl">
+                  {title}
+                </h2>
+                <div className="pop-bar mt-3" aria-hidden />
                 {description && (
                   <p className="prose-muted mt-3 text-[0.95rem]">{description}</p>
                 )}

@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowRight, Download, Mail } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Github, Linkedin, Twitter } from '@/components/SocialIcons';
 import Reveal from '@/components/ui/Reveal';
 import { ButtonLink } from '@/components/ui/Button';
@@ -8,13 +9,18 @@ import { ButtonLink } from '@/components/ui/Button';
 /**
  * Proof points, not adjectives. Every number here is already asserted
  * elsewhere in the repo (Context.md / Contributions.tsx) — nothing invented.
+ * Each carries its own slight tilt and a fixed pop colour so the strip
+ * reads as a scattered set of index cards rather than a flat table row —
+ * cards straighten and lift on hover/focus.
  */
 const proof = [
-  { value: '7,000+', label: 'PyPI downloads', detail: 'run-git' },
-  { value: '13+', label: 'Merged PRs', detail: 'openagent-eval' },
-  { value: '18+', label: 'Eval metrics', detail: 'RAG + agents' },
-  { value: '2022–26', label: 'B.E. CSE', detail: 'BEU Patna' },
+  { value: '7,000+', label: 'PyPI downloads', detail: 'run-git', pop: 'var(--pop-lime)', tilt: -2 },
+  { value: '13+', label: 'Merged PRs', detail: 'openagent-eval', pop: 'var(--pop-red)', tilt: 1.5 },
+  { value: '18+', label: 'Eval metrics', detail: 'RAG + agents', pop: 'var(--accent)', tilt: -1.5 },
+  { value: '2022–26', label: 'B.E. CSE', detail: 'BEU Patna', pop: 'var(--pop-lime)', tilt: 2 },
 ];
+
+const skillTags = ['Agentic systems', 'LLM infrastructure', 'Developer tools'];
 
 const socials = [
   { href: 'https://github.com/himanshu231204', label: 'GitHub', Icon: Github },
@@ -24,6 +30,8 @@ const socials = [
 ];
 
 export default function Hero() {
+  const reduceMotion = useReducedMotion();
+
   return (
     <section className="relative overflow-hidden pt-36 pb-20 md:pt-44 md:pb-28">
       <div className="grid-bg pointer-events-none absolute inset-0" aria-hidden />
@@ -33,16 +41,16 @@ export default function Hero() {
           {/* ---------------------------------------------------------------- */}
           <div>
             <Reveal>
-              <span className="inline-flex items-center gap-2.5 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5">
-                <span className="pulse-dot relative inline-block h-1.5 w-1.5 rounded-full bg-[var(--positive)]" />
-                <span className="mono-meta text-ink-muted">
+              <span className="inline-flex items-center gap-2.5 rounded-full border border-[var(--border)] bg-[var(--pop-red)] px-3 py-1.5 text-[var(--pop-red-contrast)]">
+                <span className="pulse-dot relative inline-block h-1.5 w-1.5 rounded-full bg-[var(--pop-red-contrast)]" />
+                <span className="mono-meta font-semibold text-[var(--pop-red-contrast)]">
                   Open to AI/ML &amp; GenAI internships
                 </span>
               </span>
             </Reveal>
 
             <Reveal delay={0.05}>
-              <h1 className="display mt-7 text-5xl font-semibold md:text-7xl">
+              <h1 className="display mt-7 text-5xl font-extrabold md:text-7xl">
                 Himanshu Kumar
               </h1>
             </Reveal>
@@ -63,6 +71,16 @@ export default function Hero() {
                 </a>
                 .
               </p>
+            </Reveal>
+
+            <Reveal delay={0.12}>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {skillTags.map((tag) => (
+                  <li key={tag} className="tag">
+                    {tag.toUpperCase()}
+                  </li>
+                ))}
+              </ul>
             </Reveal>
 
             <Reveal delay={0.15}>
@@ -88,7 +106,7 @@ export default function Hero() {
             </Reveal>
 
             <Reveal delay={0.25}>
-              <div className="mt-9 flex items-center gap-1">
+              <div className="mt-9 flex items-center gap-2">
                 {socials.map(({ href, label, Icon }) => (
                   <a
                     key={label}
@@ -96,7 +114,7 @@ export default function Hero() {
                     target={href.startsWith('mailto:') ? undefined : '_blank'}
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="tap-target rounded-lg p-2.5 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink"
+                    className="tap-target rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2.5 text-ink-faint transition-colors hover:bg-[var(--surface-hover)] hover:text-ink"
                   >
                     <Icon size={18} />
                   </a>
@@ -141,20 +159,32 @@ export default function Hero() {
         </div>
 
         {/* ------------------------------------------------------------------ */}
-        {/* Proof strip: the evidence a recruiter scans for, above the fold.    */}
-        <Reveal delay={0.3}>
-          <dl className="mt-16 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--border)] md:mt-20 md:grid-cols-4">
-            {proof.map((item) => (
-              <div key={item.label} className="bg-[var(--bg)] px-5 py-6">
+        {/* Proof strip: the evidence a recruiter scans for, above the fold.
+            Each card carries its own tilt and straightens on hover/focus —
+            reduced-motion visitors get the cards flat and static instead. */}
+        <dl className="mt-16 grid grid-cols-2 gap-4 md:mt-20 md:grid-cols-4">
+          {proof.map((item, index) => (
+            <Reveal key={item.label} delay={0.3 + index * 0.04} as="div">
+              <motion.div
+                initial={reduceMotion ? undefined : { rotate: item.tilt }}
+                whileHover={reduceMotion ? undefined : { rotate: 0, y: -3 }}
+                transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-5 py-6 shadow-[3px_3px_0_0_var(--border)]"
+              >
+                <span
+                  className="mb-3 block h-1 w-8 rounded-full"
+                  style={{ background: item.pop }}
+                  aria-hidden
+                />
                 <dt className="mono-label">{item.label}</dt>
                 <dd className="mt-2.5 text-2xl font-semibold tracking-tight">
                   {item.value}
                 </dd>
                 <dd className="mono-meta mt-1">{item.detail}</dd>
-              </div>
-            ))}
-          </dl>
-        </Reveal>
+              </motion.div>
+            </Reveal>
+          ))}
+        </dl>
       </div>
     </section>
   );

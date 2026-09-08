@@ -268,7 +268,7 @@ export default function Contact() {
             <button
               type="submit"
               disabled={status === 'loading'}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[var(--accent)] px-5 py-3 text-sm font-medium text-[var(--accent-contrast)] transition-colors hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="btn-hard inline-flex w-full items-center justify-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-[var(--accent-contrast)] transition-colors hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {status === 'loading' ? (
                 <>
