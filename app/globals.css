@@ -18,10 +18,12 @@
   --border: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.16);
 
-  /* Text ramp */
+  /* Text ramp. text-faint is tuned to hold WCAG AA (4.5:1) against every
+     surface token above, not just --bg — it lands on --surface-hover too
+     (icon-faint hover states, mono-meta inside cards). */
   --text: #e9ebee;
   --text-muted: #99a1ac;
-  --text-faint: #6a727e;
+  --text-faint: #7e828a;
 
   /* Single accent, desaturated so it reads as engineering, not neon */
   --accent: #7c93ff;
@@ -49,7 +51,7 @@
 
   --text: #14171c;
   --text-muted: #575e69;
-  --text-faint: #7c848f;
+  --text-faint: #697079;
 
   --accent: #3f52d9;
   --accent-hover: #3444bb;
@@ -230,6 +232,25 @@ body {
 
 .link-underline:hover {
   background-size: 100% 1px;
+}
+
+/* Expands the tappable area of a small icon-only control to the 44x44px
+   minimum (WCAG 2.5.5 / mobile touch target guidance) without enlarging the
+   icon itself — the extra hit area is an invisible pseudo-element centred
+   on the control, so the compact chrome the rest of the site relies on
+   (dense nav, tight icon rows) stays visually unchanged. */
+.tap-target {
+  position: relative;
+}
+
+.tap-target::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
 }
 
 /* Live availability dot */

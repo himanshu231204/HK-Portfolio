@@ -9,7 +9,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="rounded-lg p-2 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink"
+      className="tap-target rounded-lg p-2 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink"
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
       title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
     >
