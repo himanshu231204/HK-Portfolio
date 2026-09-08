@@ -14,9 +14,13 @@
   --surface: #101216;
   --surface-hover: #15181d;
 
-  /* Hairlines */
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.16);
+  /* Structural borders — solid and bold (cards, buttons, dividers, nav).
+     Decorative background elements (the hero grid) use --grid-line instead,
+     which stays a faint hairline so the bold border doesn't leak into the
+     ambient background pattern. */
+  --border: #6b7280;
+  --border-strong: #e9ebee;
+  --grid-line: rgba(255, 255, 255, 0.08);
 
   /* Text ramp. text-faint is tuned to hold WCAG AA (4.5:1) against every
      surface token above, not just --bg — it lands on --surface-hover too
@@ -38,20 +42,30 @@
 
   /* Selection + focus */
   --focus-ring: rgba(124, 147, 255, 0.55);
+
+  /* Pop accents — fixed vivid fills for chips, banners and icon tiles.
+     Always paired with --pop-*-contrast as the foreground; never used as
+     running text on the page background, so contrast against --bg is not
+     the constraint that matters. */
+  --pop-lime: #d7ff3e;
+  --pop-lime-contrast: #14171c;
+  --pop-red: #ff5a4e;
+  --pop-red-contrast: #14171c;
 }
 
 .light {
-  --bg: #fcfcfb;
-  --bg-subtle: #f5f5f4;
-  --surface: #ffffff;
-  --surface-hover: #f7f7f6;
+  --bg: #f3efe3;
+  --bg-subtle: #eae4d2;
+  --surface: #fbf8ef;
+  --surface-hover: #f1ecda;
 
-  --border: rgba(15, 18, 22, 0.10);
-  --border-strong: rgba(15, 18, 22, 0.20);
+  --border: #14171c;
+  --border-strong: #000000;
+  --grid-line: rgba(20, 23, 28, 0.08);
 
   --text: #14171c;
   --text-muted: #575e69;
-  --text-faint: #697079;
+  --text-faint: #67635b;
 
   --accent: #3f52d9;
   --accent-hover: #3444bb;
@@ -63,6 +77,11 @@
   --positive-soft: rgba(21, 128, 61, 0.10);
 
   --focus-ring: rgba(63, 82, 217, 0.45);
+
+  --pop-lime: #d7ff3e;
+  --pop-lime-contrast: #14171c;
+  --pop-red: #ff5a4e;
+  --pop-red-contrast: #14171c;
 }
 
 @theme inline {
@@ -79,6 +98,8 @@
   --color-accent-hover: var(--accent-hover);
   --color-accent-soft: var(--accent-soft);
   --color-positive: var(--positive);
+  --color-pop-lime: var(--pop-lime);
+  --color-pop-red: var(--pop-red);
 
   --font-sans: var(--font-geist), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
@@ -91,6 +112,19 @@
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--border-strong) transparent;
+}
+
+/* Tailwind's border-width utilities are declared inside its own
+   `utilities` cascade layer; these plain (unlayered) rules sit outside any
+   layer, so per the CSS cascade they win over the layered ones regardless
+   of source order — every `border`/`border-t`/etc. in the codebase becomes
+   a bold 2px line automatically, without touching each component. */
+.border,
+.border-t,
+.border-b,
+.border-l,
+.border-r {
+  border-width: 2px;
 }
 
 html {
@@ -196,23 +230,52 @@ body {
 }
 
 .tag-accent {
-  background: var(--accent-soft);
-  border-color: var(--accent-border);
-  color: var(--accent);
+  background: var(--pop-lime);
+  border-color: var(--border);
+  color: var(--pop-lime-contrast);
+  font-weight: 600;
 }
 
 /* ==========================================================================
    Decoration
    ========================================================================== */
 
-/* Faint engineering grid — much lower contrast than the previous version */
+/* Faint engineering grid. Uses --grid-line (a hairline) rather than the
+   now-bold --border, so the ambient background pattern stays whisper-quiet
+   even where structural borders are solid and heavy. */
 .grid-bg {
   background-image:
-    linear-gradient(to right, var(--border) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 10%, transparent 75%);
   -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 10%, transparent 75%);
+}
+
+/* Short bold underline bar under a section title — the one recurring
+   colour accent that gives each section header a fixed anchor point. */
+.pop-bar {
+  width: 3rem;
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--pop-red);
+}
+
+/* Tactile press feedback for filled buttons: a hard offset shadow that
+   compresses on press, instead of an opacity/scale fade. */
+.btn-hard {
+  box-shadow: 3px 3px 0 0 var(--border);
+  transition: box-shadow 0.12s ease, transform 0.12s ease;
+}
+
+.btn-hard:hover {
+  box-shadow: 4px 4px 0 0 var(--border);
+  transform: translate(-1px, -1px);
+}
+
+.btn-hard:active {
+  box-shadow: 1px 1px 0 0 var(--border);
+  transform: translate(2px, 2px);
 }
 
 /* Horizontal rule that fades at both ends */

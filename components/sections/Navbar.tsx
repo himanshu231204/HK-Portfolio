@@ -62,7 +62,7 @@ export default function Navbar() {
           href="/"
           className="flex items-center gap-2.5 text-sm font-semibold tracking-tight"
         >
-          <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--surface)] font-mono text-[0.7rem]">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md border border-[var(--border)] bg-[var(--text)] font-mono text-[0.7rem] text-[var(--bg)]">
             HK
           </span>
           <span className="hidden sm:inline">Himanshu Kumar</span>
@@ -76,8 +76,10 @@ export default function Navbar() {
                 key={link.name}
                 href={`/#${link.id}`}
                 aria-current={isActive ? 'true' : undefined}
-                className={`rounded-md px-3 py-1.5 text-sm transition-colors ${
-                  isActive ? 'text-ink' : 'text-ink-muted hover:text-ink'
+                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-[var(--pop-lime)] text-[var(--pop-lime-contrast)]'
+                    : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 {link.name}
@@ -99,7 +101,7 @@ export default function Navbar() {
           <ThemeToggle />
           <Link
             href="/#contact"
-            className="ml-1 hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3.5 py-2 text-sm transition-colors hover:border-[var(--border-strong)] hover:bg-[var(--surface-hover)] md:inline-flex"
+            className="btn-hard ml-1 hidden items-center rounded-lg border border-[var(--border)] bg-[var(--text)] px-3.5 py-2 text-sm font-semibold text-[var(--bg)] transition-colors md:inline-flex"
           >
             Contact
           </Link>
@@ -131,7 +133,7 @@ export default function Navbar() {
             <Link
               href="/#contact"
               onClick={() => setIsMobileMenuOpen(false)}
-              className="mt-4 rounded-lg bg-[var(--accent)] px-4 py-2.5 text-center text-sm font-medium text-[var(--accent-contrast)]"
+              className="btn-hard mt-4 rounded-lg border border-[var(--border)] bg-[var(--accent)] px-4 py-2.5 text-center text-sm font-semibold text-[var(--accent-contrast)]"
             >
               Contact
             </Link>
