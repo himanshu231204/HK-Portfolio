@@ -92,7 +92,7 @@ export default function Navbar() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="GitHub"
-            className="hidden rounded-lg p-2 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink sm:block"
+            className="tap-target hidden rounded-lg p-2 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink sm:block"
           >
             <Github size={17} />
           </a>
@@ -105,7 +105,7 @@ export default function Navbar() {
           </Link>
 
           <button
-            className="rounded-lg p-2 text-ink-muted transition-colors hover:bg-[var(--surface)] hover:text-ink md:hidden"
+            className="tap-target rounded-lg p-2 text-ink-muted transition-colors hover:bg-[var(--surface)] hover:text-ink md:hidden"
             onClick={() => setIsMobileMenuOpen((open) => !open)}
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileMenuOpen}

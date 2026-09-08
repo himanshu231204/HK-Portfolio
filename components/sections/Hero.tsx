@@ -96,7 +96,7 @@ export default function Hero() {
                     target={href.startsWith('mailto:') ? undefined : '_blank'}
                     rel="noopener noreferrer"
                     aria-label={label}
-                    className="rounded-lg p-2.5 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink"
+                    className="tap-target rounded-lg p-2.5 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink"
                   >
                     <Icon size={18} />
                   </a>

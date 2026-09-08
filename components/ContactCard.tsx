@@ -61,7 +61,7 @@ export default function ContactCard({ icon, label, value, href, copyText }: Cont
         <button
           onClick={handleCopy}
           aria-label={`Copy ${label}`}
-          className="shrink-0 rounded-md p-2 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink"
+          className="tap-target shrink-0 rounded-md p-2 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink"
         >
           {copied ? <Check size={14} className="text-[var(--positive)]" /> : <Copy size={14} />}
         </button>

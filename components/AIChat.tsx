@@ -71,14 +71,14 @@ export default function AIChat() {
                   onClick={clearChat}
                   aria-label="Clear conversation"
                   title="Clear conversation"
-                  className="rounded-md p-2 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink"
+                  className="tap-target rounded-md p-2 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink"
                 >
                   <Trash2 size={15} />
                 </button>
                 <button
                   onClick={toggleChat}
                   aria-label="Close assistant"
-                  className="rounded-md p-2 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink"
+                  className="tap-target rounded-md p-2 text-ink-faint transition-colors hover:bg-[var(--surface)] hover:text-ink"
                 >
                   <X size={15} />
                 </button>
@@ -139,7 +139,7 @@ export default function AIChat() {
                   onClick={handleSend}
                   disabled={!input.trim() || isLoading}
                   aria-label="Send message"
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--accent)] text-[var(--accent-contrast)] transition-colors hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-40"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[var(--accent)] text-[var(--accent-contrast)] transition-colors hover:bg-[var(--accent-hover)] disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <Send size={15} />
                 </button>
